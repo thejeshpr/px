@@ -1,0 +1,19 @@
+{% extends "crawler/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Site Configuration: {{ siteconf.name }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Base URL:</strong> {{ siteconf.base_url }}</p>
+            <p><strong>Enabled:</strong> {{ siteconf.enabled|yesno:"Yes,No" }}</p>
+            <p><strong>Notes:</strong> {{ siteconf.notes|default:"No Notes Available" }}</p>
+            <p><strong>Category:</strong> {{ siteconf.category.name|default:"No Category" }}</p>
+            <p><strong>Created At:</strong> {{ siteconf.created_at }}</p>
+            <p><strong>Updated At:</strong> {{ siteconf.updated_at }}</p>
+        </div>
+    </div>
+    <a href="{% url 'siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
+    <a href="{% url 'siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
+    <a href="{% url 'siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+</div>
+{% endblock %}
