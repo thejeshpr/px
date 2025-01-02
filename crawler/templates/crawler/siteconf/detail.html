@@ -10,10 +10,17 @@
             <p><strong>Category:</strong> {{ siteconf.category.name|default:"No Category" }}</p>
             <p><strong>Created At:</strong> {{ siteconf.created_at }}</p>
             <p><strong>Updated At:</strong> {{ siteconf.updated_at }}</p>
+            <p><strong>Jobs:</strong> {{ siteconf.jobs.count }}</p>
+            <p><strong>Items:</strong> {{ siteconf.items.count }}</p>
+
+            <div>
+                <strong>JSON:</strong>
+                <pre><code>{{ json_data }}</code></pre>
+            </div>
         </div>
     </div>
-    <a href="{% url 'siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
-    <a href="{% url 'siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
-    <a href="{% url 'siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+    <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
+    <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
+    <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
 </div>
 {% endblock %}
