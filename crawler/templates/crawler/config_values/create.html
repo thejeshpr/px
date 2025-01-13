@@ -7,12 +7,12 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Create New SiteConf</h5>
+            <h5 class="card-title">Create New ConfigValue</h5>
             <form method="post">
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary">Cancel</a>
+                <a href="{% url 'crawler:config-values-list' %}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>

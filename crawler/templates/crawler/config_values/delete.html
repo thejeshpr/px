@@ -1,12 +1,12 @@
 {% extends "crawler/base.html" %}
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Delete Site Configuration</h1>
-    <p>Are you sure you want to delete the site configuration "{{ object.name }}"?</p>
+    <h1 class="mb-4">Delete Config Values</h1>
+    <p>Are you sure you want to delete the Config Values "{{ object.key }}"?</p>
     <form method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Confirm</button>
-        <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary">Cancel</a>
+        <a href="{% url 'crawler:config-values-list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

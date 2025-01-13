@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteConf, Category
+from .models import SiteConf, Category, Job, Item, ConfigValues
 
 @admin.register(SiteConf)
 class SiteConfAdmin(admin.ModelAdmin):
@@ -11,7 +11,7 @@ class SiteConfAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ("General Info", {
-            'fields': ('name', 'slug', 'category', 'base_url', 'icon', 'scraper_name', 'notes')
+            'fields': ('name', 'slug', 'category', 'base_url', 'scraper_name', 'notes')
         }),
         ("Status and Flags", {
             'fields': ('enabled', 'is_locked', 'ns_flag')
@@ -29,3 +29,18 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     ordering = ('name',)
+
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = ('site_conf', 'status', 'created_at')
+
+@admin.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('site_conf', 'name', 'created_at')
+
+
+@admin.register(ConfigValues)
+class ConfigValuesAdmin(admin.ModelAdmin):
+    list_display = ('key', 'val')
+

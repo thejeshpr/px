@@ -1,0 +1,14 @@
+{% extends "crawler/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">ConfigValue: {{ config_value.key }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Value:</strong> {{ config_value.val }}</p>
+        </div>
+    </div>
+    <a href="{% url 'crawler:config-values-edit' config_value.slug %}" class="btn btn-warning mt-3">Edit</a>
+    <a href="{% url 'crawler:config-values-delete' config_value.slug %}" class="btn btn-danger mt-3">Delete</a>
+    <a href="{% url 'crawler:config-values-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+</div>
+{% endblock %}

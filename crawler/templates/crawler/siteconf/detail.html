@@ -17,10 +17,57 @@
                 <strong>JSON:</strong>
                 <pre><code>{{ json_data }}</code></pre>
             </div>
+
+            <div class="justify-content-end">
+                <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
+                <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
+                <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+            </div>
+
         </div>
     </div>
-    <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
-    <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
-    <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+
+    <h2 class="mt-5">Recent 50 Jobs</h2>
+    <div class="table-responsive bg-white text-black">
+        <table class="table table-hover table-bordered mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Elapsed Time (s)</th>
+                    <th scope="col">Number of Items</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in recent_jobs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <span class="badge
+                            {% if job.status == 'SUCCESS' %} bg-success
+                            {% elif job.status == 'ERROR' %} bg-danger
+                            {% elif job.status == 'RUNNING' %} bg-primary
+                            {% else %} bg-secondary
+                            {% endif %}">
+                            {{ job.status }}
+                        </span>
+                    </td>
+                    <td>{{ job.created_at }}</td>
+                    <td>{{ job.elapsed_time|default:"N/A" }}</td>
+                    <td>{{ job.items.count }}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-info">View Details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No jobs available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
