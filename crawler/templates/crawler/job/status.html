@@ -1,0 +1,9 @@
+{% with item_count=job.items.count %}
+    {% if job.status == "SUCCESS" %} <span class="badge rounded-pill bg-success">s</span>&nbsp;<span class="badge rounded-pill bg-dark">{{item_count}}</span>
+    {% elif job.status == "ERROR" %}<span class="badge rounded-pill bg-danger">e</span>
+    {% elif job.status == "RUNNING" %}<span class="badge rounded-pill bg-dark">r</span>
+    {% elif job.status == "NO-ITEM" %}<span class="badge rounded-pill bg-secondary">no</span>
+    {% elif job.status == "NEW" %}<span class="badge rounded-pill bg-primary">n</span>
+    {% elif job.status == "WAITING" %}<span class="badge rounded-pill bg-warning">w</span>
+    {% endif %}
+{% endwith %}
