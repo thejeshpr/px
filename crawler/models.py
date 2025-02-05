@@ -52,6 +52,25 @@ class SiteConf(models.Model):
         return reverse('crawler:siteconf-detail', kwargs={'pk': self.pk})
 
 
+class JobQueue(models.Model):
+    QUEUE_STATUS = (
+        ('WAITING', 'WAITING'),
+        ('PROCESSING', 'PROCESSING'),
+        ('COMPLETED', 'COMPLETED'),
+    )
+    uuid = models.UUIDField(default=uuid.uuid4(), max_length=50)
+    site_conf = models.ForeignKey('SiteConf', on_delete=models.CASCADE, related_name="queues", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    processed_at = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=QUEUE_STATUS, default='WAITING')
+
+    def __str__(self):
+        return f'Q:{self.site_conf.name}'
+
+    def __repr__(self):
+        return f'Q:{self.site_conf.name}'
+
+
 class Job(models.Model):
     JOB_STATUS = (
         ('NEW', 'NEW'),
@@ -65,9 +84,10 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     error = models.TextField(blank=True, null=True)
     elapsed_time = models.IntegerField(blank=True, null=True)
+    queue = models.OneToOneField('JobQueue', on_delete=models.CASCADE, blank=True, null=True, db_index=True)
+    raw_data = models.TextField(blank=True, null=True)
     site_conf = models.ForeignKey('SiteConf', on_delete=models.CASCADE, related_name='jobs', db_index=True)
     status = models.CharField(max_length=20, choices=JOB_STATUS, default="NEW", db_index=True)
-    raw_data = models.TextField(blank=True, null=True)
 
     class Meta:
         indexes = [
@@ -83,6 +103,7 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     data = models.TextField(blank=True, null=True)
     is_bookmarked = models.BooleanField(default=False, db_index=True)
+    queue = models.ForeignKey('JobQueue', on_delete=models.CASCADE, related_name='items', db_index=True, blank=True, null=True)
     job = models.ForeignKey('Job', on_delete=models.CASCADE, related_name='items', db_index=True, blank=True, null=True)
     name = models.CharField(max_length=500, db_index=True)
     site_conf = models.ForeignKey('SiteConf', on_delete=models.CASCADE, related_name='items', db_index=True)
