@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <style>
+        .square {
+            fill: #6b88ae; /* Bootstrap primary color */
+            stroke: black;
+            stroke-width: 2;
+        }
+        .circle {
+            /*fill: #538a71; !* Bootstrap success color *!*/
+            fill: #636060;
+            stroke: black;
+            stroke-width: 2;
+        }
+        .diamond {
+            /*fill: #b68286; !* Bootstrap danger color *!*/
+            fill: #538a71; /* Bootstrap danger color */
+            stroke: black;
+            stroke-width: 2;
+        }
+        .private-subnet {
+            fill: #b68286; /* Bootstrap danger color */
+            /*fill: #538a71; !* Bootstrap danger color *!*/
+            stroke: black;
+            stroke-width: 2;
+        }
+        .triangle {
+            fill: #8f7f58; /* Bootstrap warning color */
+            stroke: black;
+            stroke-width: 2;
+        }
+        .edge {
+            stroke: #6c757d; /* Bootstrap secondary color */
+            stroke-width: 2;
+            marker-end: url(#arrowhead); /* Add arrowhead */
+        }
+        text {
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+            /*font-family: Arial, sans-serif;*/
+            font-family: "Courier New";
+            fill: #ede6e6;
+        }
+        a {
+            text-decoration: none;
+        }
+
+        body {
+            background: #ece9e6;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h2 class="text-center">Network Graph</h2>
+        <div class="card">
+            <div id="graph" class="card-body" align="center"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Assuming `graphData` will be defined dynamically as part of the previous code
+        const graphData = {{ graph_data|safe }};
+        const width = 1080, height = 800;
+
+        const svg = d3.select("#graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const defs = svg.append("defs");
+
+        // Arrowhead marker
+        defs.append("marker")
+            .attr("id", "arrowhead")
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 10)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "#6c757d");
+
+        // const simulation = d3.forceSimulation(graphData.components)
+        //     .force("link", d3.forceLink(graphData.connections).id(d => d.id).distance(150))
+        //     .force("charge", d3.forceManyBody().strength(-500))
+        //     .force("center", d3.forceCenter(width / 2, height / 2))
+        //     .force("collision", d3.forceCollide().radius(50))
+        //     .on("tick", ticked);
+
+        // const simulation = d3.forceSimulation(graphData.components)
+        //     .force("link", d3.forceLink(graphData.connections).id(d => d.id).distance(150))
+        //     .force("charge", d3.forceManyBody().strength(-300))
+        //     .force("center", d3.forceCenter(width / 2, height / 2))
+        //     .force("collision", d3.forceCollide().radius(20))
+        //     .alpha(1) // Start with a higher alpha for stabilization
+        //     .alphaDecay(0.02) // Slow down the decay for better initial positioning
+        //     .on("tick", ticked);
+        //
+        // // Initialize node positions to avoid tangling
+        // graphData.components.forEach((node, index) => {
+        //     node.x = (width / graphData.components.length) * index + 50; // Spread nodes horizontally
+        //     node.y = height / 2; // Place nodes vertically centered
+        // });
+
+        const simulation = d3.forceSimulation(graphData.components)
+            .force("link", d3.forceLink(graphData.connections)
+                .id(d => d.id)
+                .distance(100) // Increase link distance to reduce crossing
+            )
+            .force("charge", d3.forceManyBody()
+                .strength(-500) // Adjust repulsion to spread out nodes
+            )
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide()
+                .radius(60) // Adjust to ensure nodes don't overlap
+            )
+            .alpha(1) // Start with higher alpha for stabilization
+            .alphaDecay(0.03) // Slow decay for better initial positioning
+            .on("tick", ticked);
+
+        // Initialize node positions
+        graphData.components.forEach((node, index) => {
+            node.x = (width / graphData.components.length) * index + 50; // Spread nodes horizontally
+            node.y = height / 3 + (index % 2 === 0 ? 100 : -100); // Stagger vertically to avoid overlap
+        });
+
+
+        // Add edges
+        const link = svg.selectAll(".edge")
+            .data(graphData.connections)
+            .enter()
+            .append("line")
+            .attr("class", "edge");
+
+        // Add edges labels
+        svg.selectAll(".edge-label")
+            .data(graphData.connections)
+            .enter()
+            .append("text")
+            .attr("class", "edge-label")
+            .text(d => d.label);
+
+        // Add components
+        const node = svg.selectAll(".node")
+            .data(graphData.components)
+            .enter()
+            .append("a")
+            .attr("href", "#") // Placeholder hyperlink
+            .append("g")
+            .attr("class", "node")
+            .attr("data-bs-toggle", "tooltip")
+            .attr("data-bs-html", "true")
+            .attr("data-bs-placement", "top")
+            .attr("title", d => d.details || "No details available") // Tooltip details
+            .call(drag(simulation));
+
+        // Draw shapes
+        node.append("rect")
+            .filter(d => d.type === "square")
+            .attr("x", -50)
+            .attr("y", -50)
+            .attr("width", 100)
+            .attr("height", 100)
+            .attr("rx", 10)
+            .attr("ry", 10)
+            .attr("class", "square");
+
+        node.append("polygon")
+            .filter(d => d.type === "diamond")
+            .attr("points", "-35,0 0,-35 35,0 0,35")
+            .attr("class", "diamond");
+
+        node.append("circle")
+            .filter(d => d.type === "circle")
+            .attr("r", 30)
+            .attr("class", "circle");
+
+        node.append("polygon")
+            .filter(d => d.type === "triangle")
+            .attr("points", "0,-40 35,20 -35,20")
+            .attr("class", "triangle");
+
+        // Add labels
+        node.append("text")
+            .text(d => d.id);
+
+        // Initialize Bootstrap tooltips
+        document.addEventListener("DOMContentLoaded", function () {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(tooltipTriggerEl => {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Prevent nodes from going out of bounds
+        // function ticked() {
+        //     link
+        //         .attr("x1", d => d.source.x)
+        //         .attr("y1", d => d.source.y)
+        //         .attr("x2", d => d.target.x)
+        //         .attr("y2", d => d.target.y);
+        //
+        //     node.attr("transform", d => {
+        //         d.x = Math.max(40, Math.min(width - 40, d.x));
+        //         d.y = Math.max(40, Math.min(height - 40, d.y));
+        //         return `translate(${d.x},${d.y})`;
+        //     });
+        // }
+        // function ticked() {
+        //     link
+        //         .attr("x1", d => d.source.x)
+        //         .attr("y1", d => d.source.y)
+        //         .attr("x2", d => d.target.x)
+        //         .attr("y2", d => d.target.y);
+        //
+        //     node.attr("transform", d => {
+        //         // Clamp the x and y positions to stay within the canvas
+        //         d.x = Math.max(50, Math.min(width - 50, d.x)); // 50 is the margin for the nodes
+        //         d.y = Math.max(50, Math.min(height - 50, d.y));
+        //         return `translate(${d.x},${d.y})`;
+        //     });
+        // }
+        function ticked() {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("transform", d => {
+                // Clamp the x and y positions to stay within the canvas
+                d.x = Math.max(60, Math.min(width - 60, d.x)); // Add margin for shapes
+                d.y = Math.max(60, Math.min(height - 60, d.y));
+                return `translate(${d.x},${d.y})`;
+            });
+        }
+
+        // Drag functionality
+        function drag(simulation) {
+            return d3.drag()
+                .on("start", event => {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    event.subject.fx = event.subject.x;
+                    event.subject.fy = event.subject.y;
+                })
+                .on("drag", event => {
+                    event.subject.fx = event.x;
+                    event.subject.fy = event.y;
+                })
+                .on("end", event => {
+                    if (!event.active) simulation.alphaTarget(0);
+                    event.subject.fx = null;
+                    event.subject.fy = null;
+                });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+

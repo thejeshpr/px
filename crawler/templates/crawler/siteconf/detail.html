@@ -1,73 +1,120 @@
 {% extends "crawler/base.html" %}
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Site Configuration: {{ siteconf.name }}</h1>
-    <div class="card">
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'crawler:siteconf-list' %}" class="text-white">Site Confs</a></li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">{{ siteconf.name }} ({{ siteconf.pk }})</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
         <div class="card-body">
-            <p><strong>Base URL:</strong> {{ siteconf.base_url }}</p>
-            <p><strong>Enabled:</strong> {{ siteconf.enabled|yesno:"Yes,No" }}</p>
-            <p><strong>Notes:</strong> {{ siteconf.notes|default:"No Notes Available" }}</p>
-            <p><strong>Category:</strong> {{ siteconf.category.name|default:"No Category" }}</p>
-            <p><strong>Created At:</strong> {{ siteconf.created_at }}</p>
-            <p><strong>Updated At:</strong> {{ siteconf.updated_at }}</p>
-            <p><strong>Jobs:</strong> {{ siteconf.jobs.count }}</p>
-            <p><strong>Items:</strong> {{ siteconf.items.count }}</p>
+            <h5 class="card-title"><strong class="text-success">{{ siteconf.name }}</strong></h5>
+            <code class="text-white">
+                <strong>Base URL:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.base_url }}</span><br/>
+                <strong>Enabled:</strong> <span class="badge rounded-pill bg-{{ siteconf.enabled|yesno:'success,danger' }}">{{ siteconf.enabled|yesno:'yes,no' }}</span><br/>
+                <strong>Notes:</strong> {{ siteconf.notes|default:"No Notes Available" }}<br/>
+                <strong>Category:</strong> {{ siteconf.category.name|default:"No Category" }}<br/>
+                <strong>Created At:</strong> {{ siteconf.created_at }}<br/>
+                <strong>Updated At:</strong> {{ siteconf.updated_at }}<br/>
+                <strong>Jobs:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.jobs.count }}</span><br/>
+                <strong>Items:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.items.count }}</span>
+            </code>
+<!--            <hr/>-->
 
             <div>
-                <strong>JSON:</strong>
+                <strong>json:</strong>
                 <pre><code>{{ json_data }}</code></pre>
             </div>
 
+            <hr/>
             <div class="justify-content-end">
-                <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-warning mt-3">Edit</a>
-                <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-danger mt-3">Delete</a>
-                <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <a href="{% url 'crawler:siteconf-create-q' siteconf.slug %}" class="btn btn-sm btn-outline-secondary">Add to Q</a>
+                    <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-sm btn-outline-secondary">edit</a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">duplicate</a>
+                    <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-sm btn-outline-secondary">delete</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          other
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                          <li><a class="dropdown-item" href="#">edit</a></li>
+                          <li><a class="dropdown-item" href="#">duplicate</a></li>
+                          <li><a class="dropdown-item" href="#">delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+<!--                <a href="{% url 'crawler:siteconf-edit' siteconf.slug %}" class="btn btn-outline-secondary mt-3 btn-sm">Edit</a>-->
+<!--                <a href="{% url 'crawler:siteconf-crawl' siteconf.slug %}" class="btn btn-outline-secondary mt-3 btn-sm"><i class="fas fa-sync"></i> Sync</a>-->
+<!--                <a href="{% url 'crawler:siteconf-delete' siteconf.slug %}" class="btn btn-outline-secondary mt-3 btn-sm">Delete</a>-->
+<!--                <a href="{% url 'crawler:siteconf-create-q' siteconf.slug %}" class="btn btn-outline-secondary mt-3 btn-sm">Add to Q</a>-->
+<!--                <a href="{% url 'crawler:siteconf-create-q' siteconf.slug %}?force_sync=yes&redirect_to_q_list=yes" class="btn btn-outline-secondary mt-3 btn-sm">Sync Now</a>-->
             </div>
 
         </div>
     </div>
 
-    <h2 class="mt-5">Recent 50 Jobs</h2>
-    <div class="table-responsive bg-white text-black">
-        <table class="table table-hover table-bordered mt-3">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Created At</th>
-                    <th scope="col">Elapsed Time (s)</th>
-                    <th scope="col">Number of Items</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for job in recent_jobs %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>
-                        <span class="badge
-                            {% if job.status == 'SUCCESS' %} bg-success
-                            {% elif job.status == 'ERROR' %} bg-danger
-                            {% elif job.status == 'RUNNING' %} bg-primary
-                            {% else %} bg-secondary
-                            {% endif %}">
-                            {{ job.status }}
-                        </span>
-                    </td>
-                    <td>{{ job.created_at }}</td>
-                    <td>{{ job.elapsed_time|default:"N/A" }}</td>
-                    <td>{{ job.items.count }}</td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-info">View Details</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">No jobs available.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card mt-3 bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title">Recent 50 Jobs of <strong>{{ siteconf.name }}</strong></h5>
+            <div class="table-responsive bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3 bg-dark" style="border-color: dimgray">
+                    <tbody class="bg-dark">
+                        {% for job in recent_jobs %}
+                        <tr class="bg-dark">
+                            <td>{% include 'crawler/job/job.html' %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No jobs available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'crawler:job-list' %}?sc={{ siteconf.slug }}" class="justify-content-end">view all</a>
+                </div>
+
+            </div>
+        </div>
     </div>
+
+
+    <div class="card mt-2 bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title">Recent 50 Items of <strong>{{ siteconf.name }}</strong></h5>
+            <div class="table-responsive bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
+                    <tbody>
+                        {% for item in recent_items %}
+                        <tr>
+                            <td>
+                                {% include 'crawler/item/item.html' %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No Items available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'crawler:item-list' %}?sc={{ siteconf.slug }}" class="justify-content-end">view all</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 {% endblock %}

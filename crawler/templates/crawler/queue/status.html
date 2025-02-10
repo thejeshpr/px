@@ -1,0 +1,5 @@
+{% if queue.status == "WAITING" %} <span class="badge rounded-pill bg-warning text-dark">waiting</span>
+{% elif queue.status == "PROCESSING" %}<span class="badge rounded-pill bg-primary">processing</span>
+{% elif queue.status == "COMPLETED" %}<span class="badge rounded-pill bg-success">completed</span>
+{% elif queue.status == "ERROR" %}<span class="badge rounded-pill bg-danger">error</span>
+{% endif %}

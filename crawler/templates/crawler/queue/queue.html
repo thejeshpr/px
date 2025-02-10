@@ -1,0 +1,27 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-secondary"><strong>#{{ queue.id }}</strong></span>
+        <a class="text-white" href="{% url 'crawler:q-detail' queue.pk %}">{{ queue.uuid|truncatechars:"6" }}</a>
+
+
+        <div class="float-end">
+            {% include 'crawler/queue/status.html' %}
+        </div><br/>
+
+        <small>
+            <span class="text-muted"><i class="las la-calendar"></i> : {{ queue.created_at|date:'d/m/Y h:i:s a' }} <br/></span>
+            <span class="text-muted"><i class="las la-chalkboard"></i> : {{ queue.processed_at|date:'d/m/Y h:i:s a' }}</span>
+            <br/>
+            <strong>jobs:</strong><br/>
+            {% for job in queue.jobs.all %}
+                {% if job.status == "ERROR" %}
+                    <span class="mx-2">- <a class="text-danger" href="{% url 'crawler:job-detail' job.pk %}">{{ job.site_conf.name }} [j:{{ job.id }} - i:{{job.items.count}}]</a></span><br/>
+                {% else %}
+                    <span class="mx-2">
+                        - <strong class="{% if job.status == 'NEW' %}text-muted{% else %}text-success{% endif %}">{{ job.site_conf.name }} </strong>
+                        <a class="text-muted" href="{% url 'crawler:job-detail' job.pk %}">[j:{{ job.id }}i:{{job.items.count}}]</a></span><br/>
+                {% endif %}
+            {% endfor %}
+        </small>
+    </code>
+</div>

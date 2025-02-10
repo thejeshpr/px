@@ -18,7 +18,7 @@ class SiteConfListView(ListView):
     template_name = "crawler/siteconf/list.html"
     context_object_name = "siteconfs"
     paginate_by = 10  # Pagination
-
+    queryset = SiteConf.objects.order_by('-id')
 
 class SiteConfDetailView(DetailView):
     model = SiteConf
@@ -45,6 +45,8 @@ class SiteConfDetailView(DetailView):
 
         context["json_data"] = json.dumps(json_data, indent=4)
         context["recent_jobs"] = context['siteconf'].jobs.order_by("-id")[:50]
+        context["recent_items"] = context['siteconf'].items.order_by("-id")[:50]
+        # context['active_queues'] = context['siteconf'].queues.exclude(status="COMPLETED").order_by("-id")
         return context
 
 
@@ -111,7 +113,7 @@ class SiteConfByJSONView(FormView):
             ns_flag=json_data.get("ns_flag"),
             notes=json_data.get("notes"),
             store_raw_data=json_data.get("store_raw_data"),
-            category=Category.objects.get(name=json_data.get("category"))
+            category=Category.objects.get_or_create(name=json_data.get("category"))
         )
         self.success_url = reverse_lazy('crawler:siteconf-detail', kwargs=dict(slug=sc_obj.slug))
         return super().form_valid(form)

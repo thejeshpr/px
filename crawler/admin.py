@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteConf, Category, Job, Item, ConfigValues
+from .models import SiteConf, Category, Job, Item, ConfigValues, JobQueue
 
 @admin.register(SiteConf)
 class SiteConfAdmin(admin.ModelAdmin):
@@ -44,3 +44,7 @@ class ItemAdmin(admin.ModelAdmin):
 class ConfigValuesAdmin(admin.ModelAdmin):
     list_display = ('key', 'val')
 
+
+@admin.register(JobQueue)
+class JobQueueAdmin(admin.ModelAdmin):
+    list_display = ('id', 'status', 'created_at', 'processed_at')

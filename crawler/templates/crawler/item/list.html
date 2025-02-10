@@ -1,0 +1,50 @@
+{% extends "crawler/base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">All Items</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+
+            <h5 class="card-title">Items <strong>{% if sc %} - {{ sc.name }} {% endif %}</strong>
+                &nbsp;&nbsp;
+                {% if sc %}
+                    <small>
+                        <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">clear filter[X]</a>
+                    </small>
+                {% endif %}
+            </h5>
+
+            <div class="table-responsive bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>
+                                {% include 'crawler/item/item.html' %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        {% include 'crawler/generic/pagination.html' %}
+    </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+

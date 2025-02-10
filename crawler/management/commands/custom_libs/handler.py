@@ -3,6 +3,8 @@ import logging
 import time
 import urllib.parse
 
+from bs4 import BeautifulSoup
+
 from crawler.models import SiteConf, Job, Item, ConfigValues
 from crawler.management.commands.custom_libs import scrapper_module_finder
 
@@ -120,9 +122,13 @@ class Handler:
             logging.info(
                 f"data is up to date, no new tasks will be created for {self.sc.name}, job: {self.job.id}")
 
-    def update_raw_data(self, raw_data):
+    def update_raw_data(self, raw_data, byte_data=False):
         logger.debug(f"storing raw data of job: {self.job.id} of SC: {self.sc.name}")
         if self.sc.store_raw_data:
+
+            if byte_data:
+                raw_data = BeautifulSoup(raw_data.decode("utf-8")).prettify()
+
             self.job.raw_data = raw_data
 
     @staticmethod

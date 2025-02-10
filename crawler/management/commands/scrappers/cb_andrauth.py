@@ -1,3 +1,4 @@
+import json
 import logging
 
 from crawler.management.commands.custom_libs.web_client import WebClient
@@ -7,10 +8,10 @@ from crawler.management.commands.custom_libs.handler import Handler
 def scrape(handler: Handler, extras, *args, **kwargs):
     base_url = handler.sc.base_url
     res = WebClient.get(base_url)
-    handler.update_raw_data(res.content.strip())
 
     if res.status_code == 200:
         jdata = res.json()
+        handler.update_raw_data(json.dumps(jdata, indent=4))
 
         for item in jdata["data"]["posts"]:
             data = (f"desc: {item['excerpt']}"
@@ -24,5 +25,6 @@ def scrape(handler: Handler, extras, *args, **kwargs):
                 data=data
             )
     else:
+        handler.update_raw_data(res.content.strip())
         logging.error(f"Error while fetching andrauth data: {res}")
 

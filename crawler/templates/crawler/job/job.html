@@ -1,0 +1,15 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-secondary"><strong>#{{ job.id }}</strong></span>
+        <a class="text-white" href="{% url 'crawler:job-detail' job.id %}">{{ job.site_conf.name }}</a>
+        <a class="text-white" href="{% url 'crawler:siteconf-detail' job.site_conf.slug %}"><i class="las la-cog"></i></a>
+        <div class="float-end">
+            {% include 'crawler/job/status.html' %}
+        </div><br/>
+        <small class="text-muted">
+            {{ job.created_at|date:'d/m/Y h:i:s a' }} |
+            {{ job.elapsed_time }}s
+            {% if job.queue %}| <a class="text-white" href="{% url 'crawler:q-detail' job.queue.pk %}">[Q]</a>{% endif %}
+        </small>
+    </code>
+</div>

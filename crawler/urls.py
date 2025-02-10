@@ -4,7 +4,10 @@ from . import cat_views
 from . import item_views
 from . import job_views
 from . import config_views
+from . import q_views
+
 from . import test_views
+
 
 app_name = 'crawler'
 
@@ -17,6 +20,14 @@ urlpatterns = [
     path('sc/<slug:slug>/delete/', views.SiteConfDeleteView.as_view(), name='siteconf-delete'),
     path('sc/<slug:slug>/crawl/', views.crawl, name='siteconf-crawl'),
     path('sc/<slug:slug>/duplicate/', views.DuplicateSiteConfListView.as_view(), name='siteconf-duplicate'),
+    path('sc/<slug:slug>/add-to-q/', q_views.QueueCreateView.as_view(), name='siteconf-create-q'),
+
+    path('queue/', q_views.QueueListView.as_view(), name='q-list'),
+    path('queue/process/', q_views.ProcessQueues.as_view(), name='q-process'),
+    path('queue/<int:pk>/', q_views.JobQueueDetailView.as_view(), name='q-detail'),
+
+    path('job/', job_views.JobListView.as_view(), name='job-list'),
+    path('job/<int:pk>', job_views.JobDetailView.as_view(), name='job-detail'),
 
     path('category/', cat_views.CategoryListView.as_view(), name='category-list'),
     path('category/add/', cat_views.CategoryCreateView.as_view(), name='category-add'),
@@ -30,10 +41,12 @@ urlpatterns = [
     path('config_values/<slug:slug>/edit/', config_views.ConfigValuesUpdateView.as_view(), name='config-values-edit'),
     path('config_values/<slug:slug>/delete/', config_views.ConfigValuesDeleteView.as_view(), name='config-values-delete'),
 
+    path('item/', item_views.ItemListView.as_view(), name='item-list'),
     path('item/add/', item_views.ItemCreateView.as_view(), name='item-add'),
 
 
-    path('network-graph/', test_views.network_graph, name='network_graph'),
+
+    # path('network-graph/', test_views.network_graph, name='network_graph'),
 
     # path('job/run/', job_views, name='job-run'),
 

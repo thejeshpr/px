@@ -1,0 +1,48 @@
+{% extends "crawler/base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Home</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title">Queues
+                {% if q_in_waiting %}
+                    &nbsp;&nbsp;
+                    <a class="btn btn-sm btn-secondary" href="{% url 'crawler:q-process' %}?get_q_list=yes">Process Q</a>
+                {% endif %}
+            </h5>
+
+            <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray">
+                <thead>
+                </thead>
+                <tbody>
+                    {% for queue in queues %}
+                    <tr>
+                        <td>
+                            {% include 'crawler/queue/queue.html' %}
+                        </td>
+                    {% empty %}
+                        <td>
+                            NO QUEUES FOUND
+                        </td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% include 'crawler/generic/pagination.html' %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+

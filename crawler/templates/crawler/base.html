@@ -32,7 +32,9 @@
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
   </head>
 
-  <body style="background: darkgrey;">
+<!--  <body style="background: #595754">-->
+  <body style="background: #424949">
+<!--  <body class="bg-secondary">-->
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
       <div class="container-fluid">
@@ -46,10 +48,13 @@
               <a class="nav-link" href="{% url 'crawler:siteconf-list' %}"><i class="las la-sync"></i> SiteConf</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="las la-tasks"></i> Jobs</a>
+              <a class="nav-link" href="{% url 'crawler:job-list' %}"><i class="las la-tasks"></i> Jobs</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="las la-tasks"></i> Items</a>
+              <a class="nav-link" href="{% url 'crawler:item-list' %}"><i class="las la-tasks"></i> Items</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'crawler:q-list' %}"><i class="las la-tasks"></i> Queues</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:config-values-list' %}"><i class="las la-cogs"></i> ConfigVals</a>

@@ -1,0 +1,17 @@
+<div>
+    <span class="badge bg-secondary">#{{ item.id }}</span>
+    <code class="text-muted">
+        <a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>
+    || {{ item.created_at|date:'Y-m-d H:i' }} </code><br/>
+    <code>
+        <span class="text-white">{{ item.name }}</span><br/>
+        <a href="{{ item.url }}" class="text-muted">{{ item.url }}</a>
+    </code><br/>
+    {% if item.data %}<code class="text-white">{{ item.data }}</code><br/>{% endif %}
+
+    {% if item.url|slice:":6" not in 'https://' %}
+    <code class="text-danger">
+        {{ item.url }}<br/>
+    </code>
+    {% endif %}
+</div>

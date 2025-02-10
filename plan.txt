@@ -1,2 +1,4 @@
 plan
 -------------
+- add q processed history
+- add stats creation logic
