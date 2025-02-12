@@ -1,14 +1,30 @@
 {% extends "crawler/base.html" %}
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">ConfigValue: {{ config_value.key }}</h1>
-    <div class="card">
+
+     <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'crawler:config-values-list' %}" class="text-white">Config Values</a></li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">{{ config_value.pk }}</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
         <div class="card-body">
-            <p><strong>Value:</strong> {{ config_value.val }}</p>
+            <code class="text-white">
+                <span><strong>Key:</strong> {{ config_value.key }}</span><br/>
+                <span><strong>Value:</strong> {{ config_value.val }}</span>
+            </code>
+            <br/>
+            <hr/>
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a href="{% url 'crawler:config-values-edit' config_value.slug %}" class="btn btn-sm btn-outline-secondary">edit</a>
+                <a href="{% url 'crawler:config-values-delete' config_value.slug %}" class="btn btn-sm btn-outline-secondary">delete</a>
+            </div>
+
         </div>
     </div>
-    <a href="{% url 'crawler:config-values-edit' config_value.slug %}" class="btn btn-warning mt-3">Edit</a>
-    <a href="{% url 'crawler:config-values-delete' config_value.slug %}" class="btn btn-danger mt-3">Delete</a>
-    <a href="{% url 'crawler:config-values-list' %}" class="btn btn-secondary mt-3">Back to List</a>
+
 </div>
 {% endblock %}

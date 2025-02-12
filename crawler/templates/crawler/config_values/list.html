@@ -1,46 +1,37 @@
 {% extends "crawler/base.html" %}
+
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Config Values</h1>
-    <a href="{% url 'crawler:config-values-add' %}" class="btn btn-primary mb-3">Add New ConfigValue</a>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Base URL</th>
-                <th>Enabled</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for config_value in config_values %}
-            <tr>
-                <td>{{ config_value.key }}</td>
-                <td></td>
-                <td></td>
-                <td>
-                    <a href="{% url 'crawler:config-values-detail' config_value.slug %}" class="btn btn-info btn-sm">View</a>
-                    <a href="{% url 'crawler:config-values-edit' config_value.slug %}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{% url 'crawler:config-values-delete' config_value.slug %}" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center">No Config Values found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-center">
-        {{ page_obj.paginator.page_range }}
-        {% if is_paginated %}
-            {{ page_obj.previous_page_number }}
-            {{ page_obj.next_page_number }}
-        {% endif %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">Config Values</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title">Config Vales</h5>
+            <div class="table-responsive bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray;">
+                    <tbody>
+                        {% for config_value in config_values %}
+                        <tr>
+                            <td>
+                                <code><a class="text-white" href="{% url 'crawler:config-values-detail' config_value.slug %}"> {{ config_value.id }} - {{ config_value.key }}</a></code>
+                            </td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% include 'crawler/generic/pagination.html' %}
+
+        </div>
     </div>
+
 </div>
 {% endblock %}
-
 
 
 

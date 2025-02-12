@@ -1,0 +1,14 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-secondary"><strong>
+            #{{ category.id }}
+        </strong></span>
+        <a class="text-white" href="{% url 'crawler:category-detail' category.id %}">{{ category.name }}</a>
+        <br/>
+        <small class="text-muted">
+            SC: <a class="text-muted" href="#">{{category.site_confs.count}}</a>
+            Jobs: <a class="text-muted" href="{% url 'crawler:job-list' %}?cat={{ category.slug }}">{{category.jobs.count}}</a>
+            Items: <a class="text-muted" href="{% url 'crawler:item-list' %}?cat={{ category.slug }}">{{category.items.count}}</a>
+        </small>
+    </code>
+</div>

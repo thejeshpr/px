@@ -13,9 +13,9 @@
     <div class="card bg-dark text-white">
         <div class="card-body">
 
-            <h5 class="card-title">Items <strong>{% if sc %} - {{ sc.name }} {% endif %}</strong>
+            <h5 class="card-title">Items <strong>{% if header %} <span class="badge rounded-pill bg-secondary">{{ header }}</span> {% endif %}</strong>
                 &nbsp;&nbsp;
-                {% if sc %}
+                {% if header %}
                     <small>
                         <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">clear filter[X]</a>
                     </small>
