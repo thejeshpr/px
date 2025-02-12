@@ -61,7 +61,7 @@ class ItemListView(ListView):
         if sc:
             qry = qry.filter(site_conf__slug=sc)
         if cat:
-            qry = qry.filter(category__slug=sc)
+            qry = qry.filter(category__slug=cat)
 
         qry = qry.order_by('-id')
         return qry
