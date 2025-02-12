@@ -2,7 +2,8 @@
     <span class="badge bg-secondary">#{{ item.id }}</span>
     <code class="text-muted">
         <a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>
-    || {{ item.created_at|date:'Y-m-d H:i' }} </code><br/>
+        <a class="text-muted" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category }}</a>
+        || {{ item.created_at|date:'Y-m-d H:i' }} </code><br/>
     <code>
         <span class="text-white">{{ item.name }}</span><br/>
         <a href="{{ item.url }}" class="text-muted">{{ item.url }}</a>
