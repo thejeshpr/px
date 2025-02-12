@@ -20,6 +20,7 @@ class SiteConfListView(ListView):
     paginate_by = 10  # Pagination
     queryset = SiteConf.objects.order_by('-id')
 
+
 class SiteConfDetailView(DetailView):
     model = SiteConf
     template_name = "crawler/siteconf/detail.html"

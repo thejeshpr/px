@@ -15,11 +15,11 @@
             <strong>jobs:</strong><br/>
             {% for job in queue.jobs.all %}
                 {% if job.status == "ERROR" %}
-                    <span class="mx-2">- <a class="text-danger" href="{% url 'crawler:job-detail' job.pk %}">{{ job.site_conf.name }} [j:{{ job.id }} - i:{{job.items.count}}]</a></span><br/>
+                    <span class="mx-2">- <a class="text-danger" href="{% url 'crawler:job-detail' job.pk %}">{{ job.id }} - {{ job.site_conf.name }} ({{job.items.count}})</a></span><br/>
                 {% else %}
                     <span class="mx-2">
-                        - <strong class="{% if job.status == 'NEW' %}text-muted{% else %}text-success{% endif %}">{{ job.site_conf.name }} </strong>
-                        <a class="text-muted" href="{% url 'crawler:job-detail' job.pk %}">[j:{{ job.id }}i:{{job.items.count}}]</a></span><br/>
+                        - <strong class="{% if job.status == 'NEW' %}text-muted{% else %}text-success{% endif %}">{{ job.id }} {{ job.site_conf.name }} </strong>
+                        <a class="text-muted" href="{% url 'crawler:job-detail' job.pk %}">[{{job.items.count}}]</a></span><br/>
                 {% endif %}
             {% endfor %}
         </small>

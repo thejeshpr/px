@@ -56,12 +56,25 @@ class ItemListView(ListView):
 
     def get_queryset(self):
         sc = self.request.GET.get("sc")
+        cat = self.request.GET.get("cat")
+        qry = Item.objects
         if sc:
-            return Item.objects.filter(site_conf__slug=sc).order_by('-id')
-        return Item.objects.order_by('-id')
+            qry = qry.filter(site_conf__slug=sc)
+        if cat:
+            qry = qry.filter(category__slug=sc)
+
+        qry = qry.order_by('-id')
+        return qry
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sc_slug = self.request.GET.get("sc")
-        context["sc"] = get_object_or_404(SiteConf, slug=sc_slug) if sc_slug else None
+        cat_slug = self.request.GET.get("cat")
+        if sc_slug:
+            context["header"] = get_object_or_404(SiteConf, slug=sc_slug)
+        elif cat_slug:
+            context["header"] = get_object_or_404(Category, slug=cat_slug)
+        else:
+            context["header"] = None
+
         return context
