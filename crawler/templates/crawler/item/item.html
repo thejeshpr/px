@@ -1,14 +1,15 @@
 <div>
     <span class="badge bg-secondary">#{{ item.id }}</span>
+    <code class="text-muted">[<a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>]</code>
+    <br/>
     <code class="text-muted">
-        <a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>
-        <a class="text-muted" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category }}</a>
-        || {{ item.created_at|date:'Y-m-d H:i' }} </code><br/>
-    <code>
         <span class="text-white">{{ item.name }}</span><br/>
-        <a href="{{ item.url }}" class="text-muted">{{ item.url }}</a>
+        <a href="{{ item.url }}" class="text-muted">{{ item.url }}</a> <br/>
+        {% if item.data %}<code class="text-white">{{ item.data }}</code><br/>{% endif %}
+        cat: <a class="text-white" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category.name }}</a>
+        date: <span><a class="text-muted" href="{% url 'crawler:item-list' %}?dt={{ item.created_at|date:'d' }}-{{ item.created_at|date:'m' }}-{{ item.created_at|date:'Y' }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">{{ item.created_at|date:'d/m/Y h:i:s a' }}</a></span>
     </code><br/>
-    {% if item.data %}<code class="text-white">{{ item.data }}</code><br/>{% endif %}
+
 
     {% if item.url|slice:":6" not in 'https://' %}
     <code class="text-danger">
