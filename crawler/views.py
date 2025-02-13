@@ -116,6 +116,7 @@ class SiteConfByJSONView(FormView):
 
     def form_valid(self, form):
         json_data = json.loads(form.cleaned_data.get("json_data"))
+        category, _ = Category.objects.get_or_create(name=json_data.get("category"))
         sc_obj = SiteConf.objects.create(
             name=json_data.get("name"),
             scraper_name=json_data.get("scraper_name"),
@@ -126,7 +127,7 @@ class SiteConfByJSONView(FormView):
             ns_flag=json_data.get("ns_flag"),
             notes=json_data.get("notes"),
             store_raw_data=json_data.get("store_raw_data"),
-            category=Category.objects.get_or_create(name=json_data.get("category"))
+            category=category
         )
         self.success_url = reverse_lazy('crawler:siteconf-detail', kwargs=dict(slug=sc_obj.slug))
         return super().form_valid(form)
