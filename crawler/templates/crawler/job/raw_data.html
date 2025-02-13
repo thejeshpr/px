@@ -19,7 +19,6 @@
                 <strong>Status:</strong>{% include 'crawler/job/status.html' %}<br/>
                 <strong>Time:</strong> {{ job.created_at |date:'Y-m-d H:i' }}<br/>
                 <strong>Time Taken:</strong> {{ job.elapsed_time }}s<br/>
-<!--                <strong>RawData:</strong> <a href="#" class="text-white">view</a>-->
 
                 {% if job.status == "ERROR" %}
                     <br/><strong>Error:</strong><br/>
@@ -32,34 +31,10 @@
 
     <div class="card bg-dark text-white mt-2">
         <div class="card-body">
-            <h5 class="card-title">Items <small><a href="{% url 'crawler:job-raw-data' job.pk %}" class="text-white text-muted">[raw data]</a></small></h5>
-            <div class="table-responsive bg-dark text-white">
-                <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
-                    <tbody>
-                        {% for item in job.items.all %}
-                        <tr>
-                            <td>
-                                <div>
-                                    {% include 'crawler/item/item.html' %}
-                                </div>
-                            </td>
-
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-white">No items available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <h5 class="card-title">Raw Data</h5>
+            <pre class="text-white"><code>{{ job.raw_data }}</code></pre>
         </div>
     </div>
 
 </div>
-{% endblock %}
-
-
-{% block jscontent %}
-{% include 'crawler/item/toggle_bookmark.html' %}
 {% endblock %}

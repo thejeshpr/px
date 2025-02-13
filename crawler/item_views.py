@@ -1,5 +1,6 @@
 import uuid
 
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
@@ -94,4 +95,15 @@ class ItemListView(ListView):
             else:
                 context["header"] = dt
 
+        context["count"] = self.get_queryset().count()
+        context['categories'] = Category.objects.all()
         return context
+
+
+# @login_required(login_url='/login/')
+def toggle_bookmark(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    item.is_bookmarked = not item.is_bookmarked
+    item.save()
+    action = "marked" if item.is_bookmarked else "unmarked"
+    return JsonResponse({"status": "ok", "action": action})

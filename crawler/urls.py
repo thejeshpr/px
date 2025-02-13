@@ -12,6 +12,8 @@ from . import test_views
 app_name = 'crawler'
 
 urlpatterns = [
+    path('', q_views.QueueListView.as_view(), name='home'),
+
     path('sc/', views.SiteConfListView.as_view(), name='siteconf-list'),
     path('sc/add/', views.SiteConfCreateView.as_view(), name='siteconf-add'),
     path('sc/add/json', views.SiteConfByJSONView.as_view(), name='siteconf-add-json'),
@@ -28,6 +30,7 @@ urlpatterns = [
 
     path('job/', job_views.JobListView.as_view(), name='job-list'),
     path('job/<int:pk>', job_views.JobDetailView.as_view(), name='job-detail'),
+    path('job/<int:pk>/raw-data', job_views.JobRawDataView.as_view(), name='job-raw-data'),
 
     path('category/', cat_views.CategoryListView.as_view(), name='category-list'),
     path('category/add/', cat_views.CategoryCreateView.as_view(), name='category-add'),
@@ -43,7 +46,7 @@ urlpatterns = [
 
     path('item/', item_views.ItemListView.as_view(), name='item-list'),
     path('item/add/', item_views.ItemCreateView.as_view(), name='item-add'),
-
+    path('item/<int:pk>/toggle-bookmark', item_views.toggle_bookmark, name='item-bookmark'),
 
 
     # path('network-graph/', test_views.network_graph, name='network_graph'),

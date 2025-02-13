@@ -13,14 +13,29 @@
     <div class="card bg-dark text-white">
         <div class="card-body">
 
-            <h5 class="card-title">Items <strong>{% if header %} <span class="badge rounded-pill bg-secondary">{{ header }}</span> {% endif %}</strong>
-                &nbsp;&nbsp;
-                {% if header %}
-                    <small>
-                        <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">clear filter[X]</a>
-                    </small>
-                {% endif %}
-            </h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">
+                    Items
+                    <span class="text-muted">({{ count }})</span>
+                    {% if header %}
+                        <strong><span class="badge rounded-pill bg-secondary">{{ header }}</span></strong>
+                        <small>
+                            <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">X</a>
+                        </small>
+                    {% endif %}
+                </h5>
+
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                      Catgeory
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        {% for cat in categories %}
+                            <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?cat={{cat.slug}}">{{ cat.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
 
             <div class="table-responsive bg-dark text-white">
                 <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
@@ -43,7 +58,9 @@
 </div>
 {% endblock %}
 
-
+{% block jscontent %}
+{% include 'crawler/item/toggle_bookmark.html' %}
+{% endblock %}
 
 
 

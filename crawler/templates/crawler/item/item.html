@@ -1,4 +1,6 @@
 <div>
+<!--    <span id="{{item.pk}}" class="bm-icon text-{{ item.is_bookmarked|yesno:'warning,secondary' }}">*</span>-->
+    <i id="{{item.pk}}" class="bm-icon lar la-bookmark text-{{ item.is_bookmarked|yesno:'warning,white' }}"></i>
     <span class="badge bg-secondary">#{{ item.id }}</span>
     <code class="text-muted">[<a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>]</code>
     <br/>
@@ -11,7 +13,7 @@
             cat: <a class="text-white" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category.name }}</a>
             date: <span><a class="text-muted" href="{% url 'crawler:item-list' %}?dt={{ item.created_at|date:'d' }}-{{ item.created_at|date:'m' }}-{{ item.created_at|date:'Y' }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">{{ item.created_at|date:'d/m/Y h:i:s a' }}</a></span>
         </code>
-        <span class="text-{{ item.is_bookmarked|yesno:'warning,white' }}">*</span>
+<!--        <span class="text-{{ item.is_bookmarked|yesno:'warning,white' }}">*</span>-->
     </div>
 
     {% if item.url|slice:":6" not in 'https://' %}

@@ -70,7 +70,7 @@ class JobListView(ListView):
     model = Job
     template_name = "crawler/job/list.html"
     context_object_name = "jobs"
-    paginate_by = 50  # Pagination
+    paginate_by = 10  # Pagination
 
     def get_queryset(self):
         sc = self.request.GET.get("sc")
@@ -132,4 +132,10 @@ class JobListView(ListView):
 class JobDetailView(DetailView):
     model = Job
     template_name = "crawler/job/detail.html"
+    context_object_name = "job"
+
+
+class JobRawDataView(DetailView):
+    model = Job
+    template_name = "crawler/job/raw_data.html"
     context_object_name = "job"

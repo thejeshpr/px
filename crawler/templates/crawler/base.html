@@ -57,6 +57,9 @@
               <a class="nav-link" href="{% url 'crawler:q-list' %}"><i class="las la-tasks"></i> Queues</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="{% url 'crawler:category-list' %}"><i class="las la-cogs"></i> Category</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:config-values-list' %}"><i class="las la-cogs"></i> ConfigVals</a>
             </li>
             <li class="nav-item">
@@ -65,26 +68,21 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:siteconf-add' %}"><i class="las la-plus"></i> SiteConf</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Categories
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="{% url 'crawler:category-list' %}">All Categories</a></li>
-                <li><a class="dropdown-item" href="{% url 'crawler:category-add' %}">New Category</a></li>
-              </ul>
-            </li>
+
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-other" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Other
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown-other">
+                <li><a class="dropdown-item" href="{% url 'crawler:category-add' %}">Add Category</a></li>
+                <li><a class="dropdown-item" href="{% url 'crawler:item-add' %}">Add Item</a></li>
+
                 <li><a class="dropdown-item" href="#">Data Dump</a></li>
                 <li><a class="dropdown-item" href="#">Bulk Create</a></li>
                 <li><a class="dropdown-item" href="#">Stats</a></li>
                 <li><a class="dropdown-item" href="#">Random Task</a></li>
                 <li><a class="dropdown-item" href="#">Search</a></li>
-                <li><a class="dropdown-item" href="{% url 'crawler:item-add' %}">Add Item</a></li>
+
               </ul>
             </li>
           </ul>
