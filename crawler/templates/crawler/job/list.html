@@ -11,7 +11,7 @@
 
     <div class="card bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">Jobs <strong>{% if header %} <span class="badge rounded-pill bg-secondary">{{ header }}</span> {% endif %}</strong>
+            <h5 class="card-title">Jobs <span class="text-muted">({{ count }})</span><strong>{% if header %} <span class="badge rounded-pill bg-secondary">{{ header }}</span> {% endif %}</strong>
                 &nbsp;&nbsp;
                 {% if header %}
                     <small>
@@ -19,6 +19,19 @@
                     </small>
                 {% endif %}
             </h5>
+
+            <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Status Filter
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=SUCCESS">success</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=ERROR">error</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=NEW">new</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=WAITING">waiting</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=NO-ITEM">no-item</a></li>
+                </ul>
+            </div>
 
             <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray">
                 <tbody>

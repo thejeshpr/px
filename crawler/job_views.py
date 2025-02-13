@@ -1,3 +1,4 @@
+import datetime
 import sys
 
 from django.core import management
@@ -74,12 +75,24 @@ class JobListView(ListView):
     def get_queryset(self):
         sc = self.request.GET.get("sc")
         cat = self.request.GET.get("cat")
+        dt = self.request.GET.get("dt")
+        status = self.request.GET.get("status")
+
         qry = Job.objects
 
         if sc:
             qry = qry.filter(site_conf__slug=sc)
+
         if cat:
             qry = qry.filter(category__slug=cat)
+
+        if dt:
+            if dt.count("-") == 2:
+                dd, mm, yyyy = dt.split("-")
+                qry = qry.filter(created_at__year=int(yyyy), created_at__month=int(mm), created_at__day=int(dd))
+
+        if status:
+            qry = qry.filter(status=status.upper())
 
         qry = qry.order_by('-id')
         return qry
@@ -88,12 +101,31 @@ class JobListView(ListView):
         context = super().get_context_data(**kwargs)
         sc_slug = self.request.GET.get("sc")
         cat_slug = self.request.GET.get("cat")
+        dt = self.request.GET.get("dt")
+        status = self.request.GET.get("status")
+
+        context['header'] = ''
+
         if sc_slug:
             context["header"] = get_object_or_404(SiteConf, slug=sc_slug)
-        elif cat_slug:
-            context["header"] = get_object_or_404(Category, slug=cat_slug)
-        else:
-            context["header"] = None
+        if cat_slug:
+            cat = get_object_or_404(Category, slug=cat_slug)
+            if context["header"]:
+                context["header"] = f"{context['header']} | {cat}"
+            else:
+                context["header"] = cat
+        if dt:
+            if context["header"]:
+                context["header"] = f"{context['header']} | {dt}"
+            else:
+                context["header"] = dt
+
+        if status:
+            if context["header"]:
+                context["header"] = f"{context['header']} | {status}"
+            else:
+                context["header"] = status
+        context["count"] = self.get_queryset().count()
         return context
 
 

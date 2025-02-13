@@ -7,9 +7,9 @@
             {% include 'crawler/job/status.html' %}
         </div><br/>
         <small class="text-muted">
-            {{ job.created_at|date:'d/m/Y h:i:s a' }} |
+            <a class="text-muted" href="{% url 'crawler:job-list' %}?dt={{ job.created_at|date:'d' }}-{{ job.created_at|date:'m' }}-{{ job.created_at|date:'Y' }}">{{ job.created_at|date:'d/m/Y h:i:s a' }}</a> |
             {{ job.elapsed_time }}s
-            {% if job.queue %}| <a class="text-white" href="{% url 'crawler:q-detail' job.queue.pk %}">[Q]</a>{% endif %}
+            {% if job.queue %}| <a class="text-muted" href="{% url 'crawler:q-detail' job.queue.pk %}">[Q:{{ job.queue.id }}]</a>{% endif %}
         </small>
     </code>
 </div>
