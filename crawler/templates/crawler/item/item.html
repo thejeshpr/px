@@ -1,6 +1,6 @@
 <div>
 <!--    <span id="{{item.pk}}" class="bm-icon text-{{ item.is_bookmarked|yesno:'warning,secondary' }}">*</span>-->
-    <i id="{{item.pk}}" class="bm-icon las la-star text-{{ item.is_bookmarked|yesno:'warning,white' }}"></i>
+    <i id="{{item.pk}}" class="bm-icon las la-star text-{{ item.is_bookmarked|yesno:'warning,secondary' }}"></i>
     <span class="badge bg-secondary">#{{ item.id }}</span>
     <code class="text-muted">[<a class="text-muted" href="{% url 'crawler:siteconf-detail' item.site_conf.slug %}">{{ item.site_conf }}</a>]</code>
     <br/>

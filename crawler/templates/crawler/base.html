@@ -63,7 +63,7 @@
               <a class="nav-link" href="{% url 'crawler:config-values-list' %}"><i class="las la-cogs"></i> ConfigVals</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="las la-bookmark"></i> Bookmarks</a>
+              <a class="nav-link" href="{% url 'crawler:item-list' %}?show-bookmarks=yes"><i class="las la-bookmark"></i> Bookmarks</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:siteconf-add' %}"><i class="las la-plus"></i> SiteConf</a>

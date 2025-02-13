@@ -33,5 +33,5 @@ class CategoryUpdateView(UpdateView):
 
 class CategoryDeleteView(DeleteView):
     model = Category
-    template_name = "crawler/category/delete.html"
+    template_name = "crawler/generic/delete.html"
     success_url = reverse_lazy('crawler:category-list')

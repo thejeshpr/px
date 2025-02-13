@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import time
 import uuid
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -40,12 +41,32 @@ class QueueListView(ListView):
     template_name = "crawler/queue/list.html"
     context_object_name = "queues"
     paginate_by = 50  # Pagination
-    queryset = JobQueue.objects.order_by('-id')
+    # queryset = JobQueue.objects.order_by('-id')
+
+
+    def get_queryset(self):
+        status = self.request.GET.get("status")
+
+        qry = JobQueue.objects
+        if status:
+            status = status.upper()
+            qry = qry.filter(status=status)
+
+        qry = qry.order_by('-id')
+        return qry
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if JobQueue.objects.filter(status="WAITING").count():
             context["q_in_waiting"] = True
+
+        context["header"] = ""
+
+        status = self.request.GET.get("status")
+        if status:
+            context["header"] = status.lower()
+
+        context["count"] = self.get_queryset().count()
         return context
 
 
@@ -83,6 +104,7 @@ class ProcessQueues(View):
             process_queue()
 
             if request.GET.get("get_q_list", "no").lower() == "yes":
+                time.sleep(3)
                 return redirect(reverse_lazy("crawler:q-list"))
 
             return JsonResponse(dict(

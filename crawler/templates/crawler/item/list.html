@@ -17,8 +17,8 @@
                 <h5 class="card-title mb-0">
                     Items
                     <span class="text-muted">({{ count }})</span>
-                    {% if header %}
-                        <strong><span class="badge rounded-pill bg-secondary">{{ header }}</span></strong>
+                    {% if filters %}
+                        <strong><span class="badge rounded-pill bg-secondary">{{ filters }}</span></strong>
                         <small>
                             <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">X</a>
                         </small>

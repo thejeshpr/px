@@ -11,12 +11,33 @@
 
     <div class="card bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">Queues
-                {% if q_in_waiting %}
-                    &nbsp;&nbsp;
-                    <a class="btn btn-sm btn-secondary" href="{% url 'crawler:q-process' %}?get_q_list=yes">Process Q</a>
-                {% endif %}
-            </h5>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h5 class="card-title mb-0">
+                    Queues
+                    <span class="text-muted">({{ count }})</span>
+                    <a class="btn btn-sm btn-warning {{ q_in_waiting|yesno:',d-none' }}" href="{% url 'crawler:q-process' %}?get_q_list=yes">Process Q >></a>
+                </h5>
+
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                      Filter
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                      <li><a class="dropdown-item" href="{% url 'crawler:q-list' %}?status=COMPLETED">completed</a></li>
+                      <li><a class="dropdown-item" href="{% url 'crawler:q-list' %}?status=ERROR">error</a></li>
+                      <li><a class="dropdown-item" href="{% url 'crawler:q-list' %}?status=PROCESSING">processing</a></li>
+                      <li><a class="dropdown-item" href="{% url 'crawler:q-list' %}?status=WAITING">waiting</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            {% if header %}
+                <strong><span class="badge rounded-pill bg-secondary">{{ header }}</span></strong>
+                <small>
+                    <a href="{% url 'crawler:q-list' %}" class="text-white text-muted">X</a>
+                </small>
+            {% endif %}
 
             <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray">
                 <thead>

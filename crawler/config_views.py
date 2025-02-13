@@ -33,5 +33,5 @@ class ConfigValuesUpdateView(UpdateView):
 
 class ConfigValuesDeleteView(DeleteView):
     model = ConfigValues
-    template_name = "crawler/config_values/delete.html"
+    template_name = "crawler/generic/delete.html"
     success_url = reverse_lazy('crawler:config-values-list')

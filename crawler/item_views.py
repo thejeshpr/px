@@ -32,7 +32,7 @@ class ItemCreateView(View):
             )
 
             Item.objects.create(
-                is_bookmarked=form.cleaned_data['bookmark'],
+                is_bookmarked=True,
                 name=form.cleaned_data['name'],
                 url=form.cleaned_data['url'],
                 data=form.cleaned_data['data'],
@@ -59,12 +59,17 @@ class ItemListView(ListView):
         sc = self.request.GET.get("sc")
         cat = self.request.GET.get("cat")
         dt = self.request.GET.get("dt")
+        show_bookmark = self.request.GET.get("show-bookmarks")
+        print(f"bookmarks: {show_bookmark}")
 
         qry = Item.objects
         if sc:
             qry = qry.filter(site_conf__slug=sc)
         if cat:
             qry = qry.filter(category__slug=cat)
+
+        if show_bookmark and show_bookmark.lower() == "yes":
+            qry = qry.filter(is_bookmarked=True)
 
         if dt:
             if dt.count("-") == 2:
@@ -79,22 +84,33 @@ class ItemListView(ListView):
         sc_slug = self.request.GET.get("sc")
         cat_slug = self.request.GET.get("cat")
         dt = self.request.GET.get("dt")
+        show_bookmark = self.request.GET.get("show-bookmarks")
 
         context['header'] = ''
+        filters = []
+
         if sc_slug:
-            context["header"] = get_object_or_404(SiteConf, slug=sc_slug)
+            filters.append(get_object_or_404(SiteConf, slug=sc_slug).name)
+
         if cat_slug:
             cat = get_object_or_404(Category, slug=cat_slug)
-            if context["header"]:
-                context["header"] = f"{context['header']} | {cat}"
-            else:
-                context["header"] = cat
-        if dt:
-            if context["header"]:
-                context["header"] = f"{context['header']} | {dt}"
-            else:
-                context["header"] = dt
+            filters.append(cat.name)
 
+            # if context["header"]:
+            #     context["header"] = f"{context['header']} | {cat}"
+            # else:
+            #     context["header"] = cat
+        if dt:
+            filters.append(dt)
+            # if context["header"]:
+            #     context["header"] = f"{context['header']} | {dt}"
+            # else:
+            #     context["header"] = dt
+
+        if show_bookmark and show_bookmark.lower() == "yes":
+            filters.append("bookmarks")
+
+        context["filters"] = "|".join(filters)
         context["count"] = self.get_queryset().count()
         context['categories'] = Category.objects.all()
         return context

@@ -20,6 +20,8 @@
                     <code class="text-white">
                         <span>status: enabled</span><br/>
                         <span>category: {{ siteconf.category.name }}</span><br/>
+<!--                        <span>last sync: <span class="text-{{ siteconf.last_successful_sync|yesno:'white,danger' }}">{{ siteconf.last_successful_sync|default:'never' }}</span></span><br/>-->
+                        <span>last sync: <span class="text-{{ siteconf.is_old|yesno:'danger,white' }}">{{ siteconf.last_successful_sync|default:'never' }}</span></span><br/>
 
                         <div class="btn-group" role="group" aria-label="Basic outlined example">
                           <a href="{% url 'crawler:siteconf-create-q' siteconf.slug %}" class="btn btn-sm btn-outline-secondary">Add to Q</a>

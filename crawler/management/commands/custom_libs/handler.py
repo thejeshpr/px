@@ -1,9 +1,11 @@
+import datetime
 import json
 import logging
 import time
 import urllib.parse
 
 from bs4 import BeautifulSoup
+from django.utils import timezone
 
 from crawler.models import SiteConf, Job, Item, ConfigValues
 from crawler.management.commands.custom_libs import scrapper_module_finder
@@ -70,6 +72,11 @@ class Handler:
 
         finally:
             self.update_elapsed_time()
+
+            if self.job.status == "SUCCESS":
+                self.sc.last_successful_sync = timezone.now()
+                self.sc.save()
+
             self.unlock_site_conf()
 
     def get_sc_extra_data(self):

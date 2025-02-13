@@ -20,7 +20,7 @@ class ItemCreateForm(forms.Form):
     url = forms.URLField(label="URL", required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
     name = forms.CharField(max_length=500, widget=forms.TextInput(attrs={'class': 'form-control'}))
     data = forms.CharField(max_length=2000, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    bookmark = forms.BooleanField(required=False)
+    # bookmark = forms.BooleanField(required=False)
     ns = forms.BooleanField(required=False)
 
 

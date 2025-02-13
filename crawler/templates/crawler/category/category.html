@@ -3,7 +3,8 @@
         <span class="badge bg-secondary"><strong>
             #{{ category.id }}
         </strong></span>
-        <a class="text-white" href="{% url 'crawler:category-detail' category.id %}">{{ category.name }}</a>
+<!--        <a class="text-white" href="{% url 'crawler:category-detail' category.slug %}">{{ category.name }}</a>-->
+        {{ category.name }}
         <br/>
         <small class="text-muted">
             SC: <a class="text-muted" href="#">{{category.site_confs.count}}</a>

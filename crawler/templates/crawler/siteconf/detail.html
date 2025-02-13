@@ -23,7 +23,6 @@
                 <strong>Jobs:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.jobs.count }}</span><br/>
                 <strong>Items:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.items.count }}</span>
             </code>
-<!--            <hr/>-->
 
             <div>
                 <strong>json:</strong>
@@ -61,7 +60,10 @@
 
     <div class="card mt-3 bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">Recent 50 Jobs of <strong>{{ siteconf.name }}</strong></h5>
+            <h5 class="card-title">
+                Recent 50 Jobs of <strong>{{ siteconf.name }}</strong> <small class="text-muted">({{ siteconf.jobs.count }})
+                <small><a href="{% url 'crawler:job-list' %}?sc={{ siteconf.slug }}" class="text-muted">[view all]</a></small>
+            </h5>
             <div class="table-responsive bg-dark text-white">
                 <table class="table table-hover table-bordered mt-3 bg-dark" style="border-color: dimgray">
                     <tbody class="bg-dark">
@@ -71,14 +73,14 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">No jobs available.</td>
+                            <td colspan="6" class="text-center text-white">No jobs available.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
 
                 <div class="d-flex justify-content-end">
-                    <a href="{% url 'crawler:job-list' %}?sc={{ siteconf.slug }}" class="justify-content-end">view all</a>
+
                 </div>
 
             </div>
@@ -88,7 +90,10 @@
 
     <div class="card mt-2 bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">Recent 50 Items of <strong>{{ siteconf.name }}</strong></h5>
+            <h5 class="card-title">
+                Recent 50 Items of <strong>{{ siteconf.name }}</strong> <small class="text-muted">({{ siteconf.items.count }})</small>
+                <small><a href="{% url 'crawler:item-list' %}?sc={{ siteconf.slug }}" class="text-muted">[view all]</a></small>
+            </h5>
             <div class="table-responsive bg-dark text-white">
                 <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
                     <tbody>
@@ -100,16 +105,11 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">No Items available.</td>
+                            <td colspan="6" class="text-center text-white">No Items available.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'crawler:item-list' %}?sc={{ siteconf.slug }}" class="justify-content-end">view all</a>
-                </div>
-
             </div>
         </div>
     </div>

@@ -27,7 +27,6 @@ class SiteConf(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     enabled = models.BooleanField(default=True, db_index=True)
     extra_data_json = models.TextField(blank=True, null=True, default="{}")
-    # icon = models.CharField(max_length=50, default='las la-question-circle', blank=True, null=True)
     is_locked = models.BooleanField(default=False, db_index=True)
     name = models.CharField(max_length=50, unique=True, db_index=True)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
@@ -36,6 +35,7 @@ class SiteConf(models.Model):
     scraper_name = models.CharField(max_length=25, blank=True, null=True, db_index=True)
     store_raw_data = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_successful_sync = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return str(self.name)

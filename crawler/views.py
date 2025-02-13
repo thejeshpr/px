@@ -1,12 +1,15 @@
+from datetime import timedelta
 import json
 import uuid
 
+from django.db.models import Case, When, Value, BooleanField, Q
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 from .forms import SiteConfFormByJSON
 from .job_views import InvokeBackend
@@ -18,8 +21,17 @@ class SiteConfListView(ListView):
     template_name = "crawler/siteconf/list.html"
     context_object_name = "siteconfs"
     paginate_by = 10  # Pagination
-    queryset = SiteConf.objects.order_by('-id')
+    # queryset = SiteConf.objects.order_by('-id')
 
+    def get_queryset(self):
+        ten_days_ago = timezone.now() - timedelta(days=10)
+        return SiteConf.objects.annotate(
+            is_old=Case(
+                When(Q(last_successful_sync__lt=ten_days_ago) | Q(last_successful_sync__isnull=True), then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        ).order_by('-id')
 
 class SiteConfDetailView(DetailView):
     model = SiteConf
@@ -72,7 +84,7 @@ class SiteConfUpdateView(UpdateView):
 
 class SiteConfDeleteView(DeleteView):
     model = SiteConf
-    template_name = "crawler/siteconf/delete.html"
+    template_name = "crawler/generic/delete.html"
     success_url = reverse_lazy('crawler:siteconf-list')
 
 
