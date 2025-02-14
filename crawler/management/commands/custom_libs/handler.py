@@ -55,10 +55,11 @@ class Handler:
         self.job.save()
 
     def start(self):
-        scrapper = scrapper_module_finder.get_scrapper(self.sc.scraper_name)
-        self.lock_site_conf()
-        self.update_job_status('RUNNING')
         try:
+            scrapper = scrapper_module_finder.get_scrapper(self.sc.scraper_name)
+            self.lock_site_conf()
+            self.update_job_status('RUNNING')
+
             extras = self.get_sc_extra_data()
             scrapper(self, extras=extras)
             self.create_job_items()

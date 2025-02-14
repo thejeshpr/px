@@ -31,6 +31,7 @@ urlpatterns = [
     path('job/', job_views.JobListView.as_view(), name='job-list'),
     path('job/<int:pk>', job_views.JobDetailView.as_view(), name='job-detail'),
     path('job/<int:pk>/raw-data', job_views.JobRawDataView.as_view(), name='job-raw-data'),
+    path('job/bulk-create', job_views.BulkJobCreation.as_view(), name='job-create-bulk'),
 
     path('category/', cat_views.CategoryListView.as_view(), name='category-list'),
     path('category/add/', cat_views.CategoryCreateView.as_view(), name='category-add'),

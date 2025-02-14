@@ -1,0 +1,141 @@
+{% extends "crawler/base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">Job - {{ job.id }}</li>
+      </ol>
+    </nav>
+
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Bulk Create</h5>
+
+                <div class="btn-group" role="group">
+                    <a id="btn-add-all" class="btn btn-secondary btn-sm">add all</a>
+                </div>
+            </div>
+
+            <!-- List of Items -->
+            <div class="mb-3 bg-dark text-white">
+                <ul class="list-group bg-dark text-white">
+
+                    {% for sc in site_confs %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white" style="border-color: dimgray;">
+                            <code class="text-white" id="{{ sc.pk }}"><strong>#{{sc.id }}</strong> - {{sc.slug}}</code>
+<!--                            <button class="btn btn-sm btn-secondary add-btn" data-value="{{ sc.slug }}">Add</button>-->
+                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                <a href="#" class="btn btn-sm btn-outline-success btn-add" data-value="{{ sc.slug }}" data-id="{{ sc.pk }}">+</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger btn-delete" data-value="{{ sc.slug }}" data-id="{{ sc.pk }}">_</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Form -->
+            <form action="{% url 'crawler:job-create-bulk'%}" method="GET">
+                <div class="mb-3">
+                    <label for="itemValues" class="form-label text-white">Selected Items:</label>
+                    <textarea id="itemValues" name="sc" class="form-control" rows="3" style="background-color: #1e1e1e;color: #ffffff;border-color: #333;" required></textarea>
+                </div>
+
+                <!-- Code Element with Copy Button -->
+                <div class="mb-3">
+                    <label class="form-label text-white">URL:</label>
+                    <div class="d-flex align-items-center">
+                        <pre class="flex-grow-1 m-0" style="background-color: #222;color: #00ffcc;border: 1px solid #444;"><code id="codeOutput" class="d-block p-2 rounded">https://</code></pre>
+                        <button type="button" id="copyBtn" class="btn btn-outline-secondary btn-sm ms-2">Copy</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="reset" id="btn-reset" class="btn btn-warning">Reset</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block jscontent %}
+<script>
+    $(document).ready(function() {
+        let selectedItems = [];
+        let preText = "{% url 'crawler:job-create-bulk'%}?sc=";
+
+        // Individual "Add" button functionality
+        $(".btn-add").click(function() {
+            let value = $(this).data("value");
+            let pk = $(this).data("id");
+
+            if (!selectedItems.includes(value)) {
+                selectedItems.push(value);
+                updateTextAreaAndCode();
+                $("#" + pk).removeClass("text-white").addClass("text-success");
+            }
+        });
+
+        // Individual "Delete" button functionality
+        $(".btn-delete").click(function() {
+            let value = $(this).data("value");
+            let pk = $(this).data("id");
+
+            if (selectedItems.includes(value)) {
+                selectedItems = selectedItems.filter(item => item !== value);
+                updateTextAreaAndCode();
+                $("#" + pk).removeClass("text-success").addClass("text-white");
+            }
+        });
+
+        // "Add All" button functionality
+        $("#btn-add-all").click(function() {
+            $(".btn-add").each(function() {
+                let value = $(this).data("value");
+                let pk = $(this).data("id");
+
+                if (!selectedItems.includes(value)) {
+                    selectedItems.push(value);
+                    $("#" + pk).removeClass("text-white").addClass("text-success");
+                }
+            });
+
+            updateTextAreaAndCode();
+        });
+
+        // Reset button functionality
+        $("#btn-reset").click(function() {
+            selectedItems = [];
+            updateTextAreaAndCode();
+            $(".list-group-item code").removeClass("text-success").addClass("text-white");
+        });
+
+        // Copy to clipboard functionality
+        $("#copyBtn").click(function() {
+            let codeText = $("#codeOutput").text();
+            if (codeText) {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    alert("Copied to clipboard!");
+                }).catch(err => {
+                    console.error("Error copying text: ", err);
+                });
+            }
+        });
+
+        // Function to update textarea and code output
+        function updateTextAreaAndCode() {
+            $("#itemValues").val(selectedItems.join(","));
+            $("#codeOutput").text(preText + selectedItems.join(","));
+        }
+    });
+</script>
+
+{% endblock %}

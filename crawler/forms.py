@@ -36,3 +36,8 @@ class SiteConfFormByJSON(forms.Form):
             except Exception as e:
                 self.add_error(None, ValidationError(f"Invalid JSON Data: {e}"))
         return cleaned_data
+
+
+
+class BulJobForm(forms.Form):
+    site_confs = forms.CharField(widget=forms.Textarea, required=True)

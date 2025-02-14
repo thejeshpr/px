@@ -11,6 +11,15 @@ from django.urls import reverse_lazy
 from .models import JobQueue, SiteConf, Job
 from django.http import HttpResponse, JsonResponse
 
+def get_waiting_q():
+    q = JobQueue.objects.filter(status="WAITING")
+    if not q:
+        q = JobQueue.objects.create()
+    else:
+        q = q.first()
+
+    return q
+
 
 class QueueCreateView(View):
     template_name = 'crawler/queue/list.html'
@@ -22,11 +31,8 @@ class QueueCreateView(View):
                 is_success=False,
                 error_message=f"{sc.name} is either locked or not enabled"
             ))
-        q = JobQueue.objects.filter(status="WAITING")
-        if not q:
-            q = JobQueue.objects.create()
-        else:
-            q = q.first()
+
+        q = get_waiting_q()
 
         Job.objects.create(site_conf=sc, category=sc.category, queue=q)
 

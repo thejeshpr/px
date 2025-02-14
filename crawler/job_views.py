@@ -9,10 +9,13 @@ import os
 import subprocess
 import time
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DetailView
 
 from .models import SiteConf, Job, Category
+from .q_views import get_waiting_q
 
 
 class InvokeBackend:
@@ -139,3 +142,28 @@ class JobRawDataView(DetailView):
     model = Job
     template_name = "crawler/job/raw_data.html"
     context_object_name = "job"
+
+
+class BulkJobCreation(View):
+    template = "crawler/job/bulk_create.html"
+    def get(self, request):
+        context = dict()
+
+        # check if sc is given
+        sc = request.GET.get("sc")
+        sc_slug_exclude_list = ["default", "default-ns"]
+        if sc:
+            sc_list = sc.split(",")
+            site_confs = SiteConf.objects.filter(slug__in=sc_list).exclude(slug__in=sc_slug_exclude_list).all()
+            q = get_waiting_q()
+            jobs_list = [Job(site_conf=sc, category=sc.category, queue=q) for sc in site_confs]
+            res = Job.objects.bulk_create(jobs_list)
+
+            print(res)
+            return redirect(reverse_lazy('crawler:q-list'))
+
+        context["site_confs"] = SiteConf.objects.exclude(slug__in=sc_slug_exclude_list).order_by("-id")
+        return render(request, self.template, context=context)
+
+
+

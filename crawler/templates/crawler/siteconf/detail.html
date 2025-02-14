@@ -18,6 +18,7 @@
                 <strong>Enabled:</strong> <span class="badge rounded-pill bg-{{ siteconf.enabled|yesno:'success,danger' }}">{{ siteconf.enabled|yesno:'yes,no' }}</span><br/>
                 <strong>Notes:</strong> {{ siteconf.notes|default:"No Notes Available" }}<br/>
                 <strong>Category:</strong> {{ siteconf.category.name|default:"No Category" }}<br/>
+                <strong>scraper_name:</strong> <span class="badge rounded-pill bg-warning text-dark">{{ siteconf.scraper_name }}</span><br/>
                 <strong>Created At:</strong> {{ siteconf.created_at }}<br/>
                 <strong>Updated At:</strong> {{ siteconf.updated_at }}<br/>
                 <strong>Jobs:</strong> <span class="badge rounded-pill bg-secondary">{{ siteconf.jobs.count }}</span><br/>
