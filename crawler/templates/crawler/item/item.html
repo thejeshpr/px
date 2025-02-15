@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center mb-1">
         <code class="text-muted">
             <span class="text-white">{{ item.name }}</span><br/>
-            <a href="{{ item.url }}" class="text-muted">{{ item.url }}</a> <br/>
+            <a href="{{ item.url }}" class="text-muted">{{ item.url|truncatechars:50 }}</a> <br/>
             {% if item.data %}<code class="text-white">{{ item.data }}</code><br/>{% endif %}
             cat: <a class="text-white" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category.name }}</a>
             date: <span><a class="text-muted" href="{% url 'crawler:item-list' %}?{{ request.GET.urlencode }}&created_at={{ item.created_at|date:'Y' }}-{{ item.created_at|date:'m' }}-{{ item.created_at|date:'d' }}">{{ item.created_at|date:'d/m/Y h:i:s a' }}</a></span>

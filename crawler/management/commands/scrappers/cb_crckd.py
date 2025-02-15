@@ -15,7 +15,7 @@ def scrape(handler: Handler, extras, *args, **kwargs):
         if a:
             handler.verify_and_create_item(
                 unique_key=a.get('href'),
-                name=a.text.strip(),
+                name=a.attrs.get("title"),
                 url=a.get('href'),
                 # data=data
             )
