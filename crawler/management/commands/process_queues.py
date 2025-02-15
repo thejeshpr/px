@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 continue
 
             finally:
-                if q.jobs.filter(status="ERROR").exists():
+                if q.jobs.filters(status="ERROR").exists():
                     q.status = "ERROR"
                     errs = "\n\n".join(errors)
                     q.error = f"One or More job failed in this Queue:\n {errs}"

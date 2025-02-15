@@ -63,7 +63,7 @@
               <a class="nav-link" href="{% url 'crawler:config-values-list' %}"><i class="las la-cogs"></i> ConfigVals</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'crawler:item-list' %}?show-bookmarks=yes"><i class="las la-bookmark"></i> Bookmarks</a>
+              <a class="nav-link" href="{% url 'crawler:item-list' %}?is_bookmarked=1"><i class="las la-bookmark"></i> Bookmarks</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:siteconf-add' %}"><i class="las la-plus"></i> SiteConf</a>
@@ -77,6 +77,7 @@
                 <li><a class="dropdown-item" href="{% url 'crawler:category-add' %}">Add Category</a></li>
                 <li><a class="dropdown-item" href="{% url 'crawler:item-add' %}">Add Item</a></li>
                 <li><a class="dropdown-item" href="{% url 'crawler:job-create-bulk' %}">Bulk Job Create</a></li>
+                <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?sc=default">Default SC Items</a></li>
 
                 <li><a class="dropdown-item" href="#">Data Dump</a></li>
                 <li><a class="dropdown-item" href="#">Bulk Create</a></li>

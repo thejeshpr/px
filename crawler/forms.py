@@ -3,6 +3,8 @@ import json
 from django import forms
 from django.core.exceptions import ValidationError
 
+from crawler.models import Category, SiteConf, Job, Item
+
 
 #
 # created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -38,6 +40,117 @@ class SiteConfFormByJSON(forms.Form):
         return cleaned_data
 
 
-
 class BulJobForm(forms.Form):
     site_confs = forms.CharField(widget=forms.Textarea, required=True)
+
+
+# class SiteConfFilterForm(forms.Form):
+#     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all())
+
+class SiteConfFilterForm(forms.Form):
+    # category = forms.ModelChoiceField(
+    #     queryset=Category.objects.all(), required=False, empty_label="All Categories"
+    # )
+    category = forms.ChoiceField(choices=[], required=False)
+    scraper_name = forms.ChoiceField(choices=[], required=False)
+    enabled = forms.ChoiceField(
+        choices=[('', 'All'), ('true', 'Enabled'), ('false', 'Disabled')],
+        required=False
+    )
+    is_locked = forms.ChoiceField(
+        choices=[('', 'All'), ('true', 'Locked'), ('false', 'Unlocked')],
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # fetch categories
+        categories = Category.objects.values_list('slug', 'slug').distinct()
+        category_choices = [('', 'All Categories')] + list(categories)
+        self.fields['category'].choices = category_choices
+
+        # Fetch unique scraper names dynamically
+        unique_scrapers = SiteConf.objects.values_list('scraper_name', flat=True).distinct()
+        unique_scrapers = [(scraper, scraper) for scraper in unique_scrapers if scraper]
+        unique_scrapers.insert(0, ('', 'All Scrapers'))  # Default option
+        self.fields['scraper_name'].choices = unique_scrapers
+
+    # commented below because its not working as expected in views
+
+    # def clean_enabled(self):
+    #     """Convert enabled field to Boolean."""
+    #     value = self.cleaned_data.get('enabled')
+    #     if value == 'true':
+    #         return True
+    #     elif value == 'false':
+    #         return False
+    #     return None  # For 'All' option
+    #
+    # def clean_is_locked(self):
+    #     """Convert is_locked field to Boolean."""
+    #     value = self.cleaned_data.get('is_locked')
+    #     if value == 'true':
+    #         return True
+    #     elif value == 'false':
+    #         return False
+    #     return None  # For 'All' option
+
+
+
+class JobFilterForm(forms.Form):
+    category = forms.ChoiceField(choices=[], required=False)
+    site_conf = forms.ChoiceField(choices=[], required=False)
+    status = forms.ChoiceField(
+        choices=[('', 'All Statuses')] + list(Job.JOB_STATUS),
+        required=False
+    )
+    created_at = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Populate category choices using slug
+        categories = Category.objects.values_list('slug', 'slug').distinct()
+        category_choices = [('', 'All Categories')] + list(categories)
+        self.fields['category'].choices = category_choices
+
+        # Populate site_conf choices using slug
+        site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
+        site_conf_choices = [('', 'All Site Configs')] + list(site_confs)
+        self.fields['site_conf'].choices = site_conf_choices
+
+
+class ItemSearchForm(forms.Form):
+    category = forms.ChoiceField(choices=[], required=False)
+    site_conf = forms.ChoiceField(choices=[], required=False)
+    # status = forms.ChoiceField(choices=[], required=False)
+    # status = forms.ChoiceField(
+    #     choices=[('', 'All Statuses')] + list(Item.I),
+    #     required=False
+    # )
+    is_bookmarked = forms.ChoiceField(
+        choices=[('', 'All'), ('1', 'Yes'), ('0', 'No')],
+        required=False
+    )
+    created_at = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Populate category choices using slug
+        categories = Category.objects.values_list('slug', 'slug').distinct()
+        self.fields['category'].choices = [('', 'All Categories')] + list(categories)
+
+        # Populate site_conf choices using slug
+        site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
+        self.fields['site_conf'].choices = [('', 'All Site Configs')] + list(site_confs)
+
+        # Populate status choices dynamically from model
+        # status_choices = Item.objects.values_list('status', 'status').distinct()
+        # self.fields['status'].choices = [('', 'All Statuses')] + list(status_choices)

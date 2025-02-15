@@ -7,9 +7,9 @@
         {{ category.name }}
         <br/>
         <small class="text-muted">
-            SC: <a class="text-muted" href="#">{{category.site_confs.count}}</a>
-            Jobs: <a class="text-muted" href="{% url 'crawler:job-list' %}?cat={{ category.slug }}">{{category.jobs.count}}</a>
-            Items: <a class="text-muted" href="{% url 'crawler:item-list' %}?cat={{ category.slug }}">{{category.items.count}}</a>
+            SC: <a class="text-muted" href="{% url 'crawler:siteconf-list' %}?category={{ category.slug }}">{{category.site_confs.count}}</a>
+            Jobs: <a class="text-muted" href="{% url 'crawler:job-list' %}?category={{ category.slug }}">{{category.jobs.count}}</a>
+            Items: <a class="text-muted" href="{% url 'crawler:item-list' %}?category={{ category.slug }}">{{category.items.count}}</a>
         </small>
     </code>
 </div>

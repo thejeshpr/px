@@ -28,11 +28,11 @@
 
                     {% for sc in site_confs %}
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white" style="border-color: dimgray;">
-                            <code class="text-white" id="{{ sc.pk }}"><strong>#{{sc.id }}</strong> - {{sc.slug}}</code>
+                            <a href="{% url 'crawler:siteconf-detail' sc.slug %}" class="text-white" style="text-decoration: none;"><code class="text-white" id="{{ sc.pk }}"><strong>#{{sc.id }}</strong> - {{sc.slug}}</code></a>
 <!--                            <button class="btn btn-sm btn-secondary add-btn" data-value="{{ sc.slug }}">Add</button>-->
                             <div class="btn-group" role="group" aria-label="Basic outlined example">
                                 <a href="#" class="btn btn-sm btn-outline-success btn-add" data-value="{{ sc.slug }}" data-id="{{ sc.pk }}">+</a>
-                                <a href="#" class="btn btn-sm btn-outline-danger btn-delete" data-value="{{ sc.slug }}" data-id="{{ sc.pk }}">_</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger btn-delete" data-value="{{ sc.slug }}" data-id="{{ sc.pk }}">-</a>
                             </div>
                         </li>
                     {% endfor %}

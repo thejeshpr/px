@@ -5,8 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.urls import reverse_lazy
+
 from .models import SiteConf, Job, Item, Category
-from .forms import ItemCreateForm
+from .forms import ItemCreateForm, ItemSearchForm
 
 
 class ItemCreateView(View):
@@ -63,18 +64,46 @@ class ItemListView(ListView):
         print(f"bookmarks: {show_bookmark}")
 
         qry = Item.objects
-        if sc:
-            qry = qry.filter(site_conf__slug=sc)
-        if cat:
-            qry = qry.filter(category__slug=cat)
 
-        if show_bookmark and show_bookmark.lower() == "yes":
-            qry = qry.filter(is_bookmarked=True)
+        self.filters = []
 
-        if dt:
-            if dt.count("-") == 2:
-                dd, mm, yyyy = dt.split("-")
-                qry = qry.filter(created_at__year=int(yyyy), created_at__month=int(mm), created_at__day=int(dd))
+        form = ItemSearchForm(self.request.GET)
+
+        if form.is_valid():
+
+            if form.cleaned_data["category"]:
+                qry = qry.filter(category__slug=form.cleaned_data["category"])
+                self.filters.append(form.cleaned_data["category"])
+
+            if form.cleaned_data["site_conf"]:
+                qry = qry.filter(site_conf__slug=form.cleaned_data["site_conf"])
+                self.filters.append(form.cleaned_data["site_conf"])
+
+            if form.cleaned_data["created_at"]:
+                dt = form.cleaned_data["created_at"]
+                qry = qry.filter(created_at__year=dt.year, created_at__month=dt.month, created_at__day=dt.day)
+                self.filters.append(form.cleaned_data["created_at"])
+
+            if form.cleaned_data["is_bookmarked"]:
+                is_bookmarked = form.cleaned_data["is_bookmarked"] == "1"
+                qry = qry.filter(is_bookmarked=is_bookmarked)
+                if is_bookmarked:
+                    self.filters.append(f"bookmarked:{is_bookmarked}")
+                else:
+                    self.filters.append(f"bookmarked:{is_bookmarked}")
+
+        # if sc:
+        #     qry = qry.filter(site_conf__slug=sc)
+        # if cat:
+        #     qry = qry.filter(category__slug=cat)
+        #
+        # if show_bookmark and show_bookmark.lower() == "yes":
+        #     qry = qry.filter(is_bookmarked=True)
+        #
+        # if dt:
+        #     if dt.count("-") == 2:
+        #         dd, mm, yyyy = dt.split("-")
+        #         qry = qry.filter(created_at__year=int(yyyy), created_at__month=int(mm), created_at__day=int(dd))
 
         qry = qry.order_by('-id')
         return qry
@@ -96,19 +125,65 @@ class ItemListView(ListView):
             cat = get_object_or_404(Category, slug=cat_slug)
             filters.append(cat.name)
 
-            # if context["header"]:
-            #     context["header"] = f"{context['header']} | {cat}"
-            # else:
-            #     context["header"] = cat
         if dt:
             filters.append(dt)
-            # if context["header"]:
-            #     context["header"] = f"{context['header']} | {dt}"
-            # else:
-            #     context["header"] = dt
 
         if show_bookmark and show_bookmark.lower() == "yes":
             filters.append("bookmarks")
+
+        context["filters"] = self.filters
+        context["count"] = self.get_queryset().count()
+        context['categories'] = Category.objects.all()
+
+        context['form'] = ItemSearchForm(self.request.GET)
+        return context
+
+
+class BookmarkItemListView(ListView):
+    model = Item
+    template_name = "crawler/item/list.html"
+    context_object_name = "items"
+    paginate_by = 50  # Pagination
+
+    # queryset = Item.objects.order_by('-id')
+
+    def get_queryset(self):
+        sc = self.request.GET.get("sc")
+        cat = self.request.GET.get("cat")
+        dt = self.request.GET.get("dt")
+
+        qry = Item.objects.filter(is_bookmarked=True)
+        if sc:
+            qry = qry.filter(site_conf__slug=sc)
+        if cat:
+            qry = qry.filter(category__slug=cat)
+
+        if dt:
+            if dt.count("-") == 2:
+                dd, mm, yyyy = dt.split("-")
+                qry = qry.filter(created_at__year=int(yyyy), created_at__month=int(mm), created_at__day=int(dd))
+
+        qry = qry.order_by('-id')
+        return qry
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sc_slug = self.request.GET.get("sc")
+        cat_slug = self.request.GET.get("cat")
+        dt = self.request.GET.get("dt")
+
+        context['header'] = ''
+        filters = []
+
+        if sc_slug:
+            filters.append(get_object_or_404(SiteConf, slug=sc_slug).name)
+
+        if cat_slug:
+            cat = get_object_or_404(Category, slug=cat_slug)
+            filters.append(cat.name)
+
+        if dt:
+            filters.append(dt)
 
         context["filters"] = "|".join(filters)
         context["count"] = self.get_queryset().count()

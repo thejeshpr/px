@@ -18,12 +18,12 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('crawler:category-detail', kwargs={"slug": self.slig})
+        return reverse('crawler:category-detail', kwargs={"slug": self.slug})
 
 
 class SiteConf(models.Model):
     base_url = models.CharField(max_length=250, blank=True, null=True, db_index=True)
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='site_confs', blank=True, null=True)
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='site_confs', blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     enabled = models.BooleanField(default=True, db_index=True)
     extra_data_json = models.TextField(blank=True, null=True, default="{}")
@@ -32,7 +32,7 @@ class SiteConf(models.Model):
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
     notes = models.TextField(blank=True, null=True)
     ns_flag = models.BooleanField(default=False, db_index=True)
-    scraper_name = models.CharField(max_length=25, blank=True, null=True, db_index=True)
+    scraper_name = models.CharField(max_length=25, blank=True, null=True)
     store_raw_data = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_successful_sync = models.DateTimeField(blank=True, null=True)
@@ -66,10 +66,10 @@ class JobQueue(models.Model):
     status = models.CharField(max_length=20, choices=QUEUE_STATUS, default='WAITING')
 
     def __str__(self):
-        return f'Q:{self.id}'
+        return f'Q:{self.uuid}'
 
     def __repr__(self):
-        return f'Q:{self.site_conf.name}'
+        return f'Q:{self.uuid}'
 
 
 class Job(models.Model):
@@ -81,11 +81,10 @@ class Job(models.Model):
         ('ERROR', 'ERROR'),
         ('NO-ITEM', 'NO-ITEM')
     )
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='jobs', blank=True, null=True)
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='jobs', blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     error = models.TextField(blank=True, null=True)
     elapsed_time = models.IntegerField(blank=True, null=True)
-    # queue = models.OneToOneField('JobQueue', on_delete=models.CASCADE, blank=True, null=True, db_index=True)
     queue = models.ForeignKey('JobQueue', on_delete=models.CASCADE, blank=True, null=True, db_index=True, related_name="jobs")
     raw_data = models.TextField(blank=True, null=True)
     site_conf = models.ForeignKey('SiteConf', on_delete=models.CASCADE, related_name='jobs', db_index=True)
@@ -101,7 +100,7 @@ class Job(models.Model):
 
 
 class Item(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='items', blank=True, null=True)
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name='items', blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     data = models.TextField(blank=True, null=True)
     is_bookmarked = models.BooleanField(default=False, db_index=True)

@@ -46,10 +46,6 @@ class SiteConfListView(ListView):
     def get_queryset(self):
         ten_days_ago = timezone.now() - timedelta(days=10)
         ns_flag = True if self.request.GET.get('ns', 'no').lower() == "yes" else False
-        # cat = self.request.GET.get('cat', '').strip()
-        # scraper = self.request.GET.get('scraper', '').strip()
-        # enabled = self.request.GET.get('enabled', '').strip()
-        # locked = self.request.GET.get('locked', '').strip()
 
         self.filters = []
 
@@ -90,28 +86,7 @@ class SiteConfListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-
-        filter_qs = [
-            self.request.GET.get('cat'),
-            self.request.GET.get('scraper', '').strip(),
-        ]
-
-        if self.request.GET.get('enabled'):
-            if self.request.GET.get('enabled') == 'yes':
-                filter_qs.append('enabled-yes')
-            else:
-                filter_qs.append('enabled-no')
-
-        if self.request.GET.get('locked'):
-            if self.request.GET.get('locked') == 'yes':
-                filter_qs.append('locked-yes')
-            else:
-                filter_qs.append('locked-no')
-
         context['filters'] = list(filter(lambda x: x not in [None, ''], self.filters))
-        # scrapers = SiteConf.objects.exclude(scraper_name__isnull=True).values('scraper_name').distinct()
-        # context['scrapers'] = [scraper.get("scraper_name") for scraper in scrapers if scraper]
         context['form'] = SiteConfFilterForm(self.request.GET)
         return context
 

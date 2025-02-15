@@ -1,5 +1,7 @@
 {% extends "crawler/base.html" %}
 
+{% load bootstrap5 %}
+
 {% block content %}
 <div class="container mt-1">
 
@@ -17,24 +19,49 @@
                 <h5 class="card-title mb-0">
                     Items
                     <span class="text-muted">({{ count }})</span>
-                    {% if filters %}
-                        <strong><span class="badge rounded-pill bg-secondary">{{ filters }}</span></strong>
-                        <small>
-                            <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">X</a>
-                        </small>
-                    {% endif %}
+<!--                    {% if filters %}-->
+<!--                        <strong><span class="badge rounded-pill bg-secondary">{{ filters }}</span></strong>-->
+<!--                        <small>-->
+<!--                            <a href="{% url 'crawler:item-list' %}" class="text-white text-muted">X</a>-->
+<!--                        </small>-->
+<!--                    {% endif %}-->
                 </h5>
 
-                <div class="btn-group" role="group">
-                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                      Catgeory
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        {% for cat in categories %}
-                            <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?cat={{cat.slug}}">{{ cat.name }}</a></li>
-                        {% endfor %}
-                    </ul>
+<!--                <div class="btn-group" role="group">-->
+<!--                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                      Catgeory-->
+<!--                    </button>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">-->
+<!--                        {% for cat in categories %}-->
+<!--                            <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?cat={{cat.slug}}">{{ cat.name }}</a></li>-->
+<!--                        {% endfor %}-->
+<!--                    </ul>-->
+<!--                </div>-->
+                <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
+                    Filters
+                </a>
+            </div>
+
+            {% if filters %}
+                <div class="mt-2">
+                    {% for filter_ in filters %}
+                        <strong><span class="badge rounded-pill bg-secondary">{{ filter_ }}</span></strong>
+                    {% endfor %}
+                    <a class="text-muted" href="{% url 'crawler:item-list' %}">[x]</a>
                 </div>
+            {% endif %}
+
+            <div class="collapse" id="collapseFilter">
+              <div class="card card-body text-white bg-dark" style="border-color: dimgray">
+                <form method="get">
+                    {% bootstrap_form form %}
+                    <button type="submit" class="btn btn-secondary btn-sm">Apply</button>
+<!--                    <button type="reset" class="btn btn-secondary btn-sm">Reset</button>-->
+                    <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        cancel
+                    </button>
+                </form>
+              </div>
             </div>
 
             <div class="table-responsive bg-dark text-white">

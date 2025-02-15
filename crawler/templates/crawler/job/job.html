@@ -7,7 +7,7 @@
             {% include 'crawler/job/status.html' %}
         </div><br/>
         <small class="text-muted">
-            <a class="text-muted" href="{% url 'crawler:job-list' %}?dt={{ job.created_at|date:'d' }}-{{ job.created_at|date:'m' }}-{{ job.created_at|date:'Y' }}">{{ job.created_at|date:'d/m/Y h:i:s a' }}</a> |
+            <a class="text-muted" href="{% url 'crawler:job-list' %}?{{ request.GET.urlencode }}&created_at={{ job.created_at|date:'Y' }}-{{ job.created_at|date:'m' }}-{{ job.created_at|date:'d' }}">{{ job.created_at|date:'d/m/Y h:i:s a' }}</a> |
             {{ job.elapsed_time }}s
             {% if job.queue %}| <a class="text-muted" href="{% url 'crawler:q-detail' job.queue.pk %}">[Q:{{ job.queue.id }}]</a>{% endif %}
         </small>

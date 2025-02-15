@@ -26,7 +26,7 @@ class QueueCreateView(View):
 
     def get(self, request, *args, **kwargs):
         sc = get_object_or_404(SiteConf, slug=kwargs['slug'])
-        if sc.is_locked or not sc.enabled:
+        if not sc.enabled:
             return JsonResponse(dict(
                 is_success=False,
                 error_message=f"{sc.name} is either locked or not enabled"
@@ -48,7 +48,6 @@ class QueueListView(ListView):
     context_object_name = "queues"
     paginate_by = 50  # Pagination
     # queryset = JobQueue.objects.order_by('-id')
-
 
     def get_queryset(self):
         status = self.request.GET.get("status")
