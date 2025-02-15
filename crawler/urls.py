@@ -48,7 +48,9 @@ urlpatterns = [
     path('item/', item_views.ItemListView.as_view(), name='item-list'),
     path('item/add/', item_views.ItemCreateView.as_view(), name='item-add'),
     path('item/<int:pk>/toggle-bookmark', item_views.toggle_bookmark, name='item-bookmark'),
-    path('item/bookmarks', item_views.BookmarkItemListView.as_view(), name='item-bookmark-list'),
+    # path('item/bookmarks', item_views.BookmarkItemListView.as_view(), name='item-bookmark-list'),
+
+    path('item-ns/', item_views.ns_item_list_view_wrapper, name='item-list-ns'),
 
 
     # path('network-graph/', test_views.network_graph, name='network_graph'),

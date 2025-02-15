@@ -45,7 +45,7 @@ class SiteConfListView(ListView):
 
     def get_queryset(self):
         ten_days_ago = timezone.now() - timedelta(days=10)
-        ns_flag = True if self.request.GET.get('ns', 'no').lower() == "yes" else False
+        # ns_flag = True if self.request.GET.get('ns', 'no').lower() == "yes" else False
 
         self.filters = []
 
@@ -77,17 +77,28 @@ class SiteConfListView(ListView):
                 qry = qry.filter(is_locked=is_locked)
                 self.filters.append(f"is_locked={is_locked}")
 
-        if ns_flag:
-            qry = qry.exclude(ns_flag=False)
-        else:
-            qry = qry.exclude(ns_flag=True)
+            if form.cleaned_data['ns']:
+                qry = qry.filter(ns_flag=form.cleaned_data['ns'])
+                self.filters.append('ns')
+            else:
+                qry = qry.exclude(ns_flag=True)
 
+            if form.cleaned_data['never_synced']:
+                qry = qry.filter(last_successful_sync__isnull=True)
+                self.filters.append('never-synced')
+
+
+        # if ns_flag:
+        #     qry = qry.exclude(ns_flag=False)
+        # else:
+        #     qry = qry.exclude(ns_flag=True)
         return qry.order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filters'] = list(filter(lambda x: x not in [None, ''], self.filters))
         context['form'] = SiteConfFilterForm(self.request.GET)
+        context["count"] = self.get_queryset().count()
         return context
 
 

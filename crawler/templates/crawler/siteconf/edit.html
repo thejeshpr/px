@@ -4,9 +4,18 @@
 
 {% block content %}
 
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
+<div class="container mt-3">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:home' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page"><a href="{% url 'crawler:siteconf-list' %}" class="text-white"><strong>SiteConfs</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Edit</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body bg-dark text-white">
             <h5 class="card-title">Edit SiteConf : {{ siteconf.name }} </h5>
             <form method="post">
                 {% csrf_token %}

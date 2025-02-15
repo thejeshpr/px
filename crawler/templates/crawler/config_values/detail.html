@@ -4,9 +4,9 @@
 
      <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'crawler:config-values-list' %}" class="text-white">Config Values</a></li>
-        <li class="breadcrumb-item active text-dark" aria-current="page">{{ config_value.pk }}</li>
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white"><strong>Home</strong></a></li>
+          <li class="breadcrumb-item"><a href="{% url 'crawler:config-values-list' %}" class="text-white"><strong>Config Values</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Config-{{ config_value.pk }}</li>
       </ol>
     </nav>
 

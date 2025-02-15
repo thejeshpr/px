@@ -106,6 +106,12 @@ class JobListView(ListView):
                 qry = qry.filter(status=form.cleaned_data["status"])
                 self.filters.append(form.cleaned_data["status"])
 
+            if form.cleaned_data["ns"]:
+                qry = qry.filter(site_conf__ns_flag=True)
+                self.filters.append('ns')
+            else:
+                qry = qry.filter(site_conf__ns_flag=False)
+
         qry = qry.order_by('-id')
         return qry
 
@@ -140,7 +146,17 @@ class JobListView(ListView):
 
         context['filters'] = self.filters
         context["count"] = self.get_queryset().count()
-        context["form"] = JobFilterForm(self.request.GET)
+
+        ns = self.request.GET.get("ns", "").strip()
+        if ns:
+            site_confs = SiteConf.objects.filter(ns_flag=True).values_list('slug', 'slug').distinct()
+            site_conf_choices = [('', 'All Site Configs')] + list(site_confs)
+
+            form = JobFilterForm(self.request.GET, site_conf=site_conf_choices)
+        else:
+            form = JobFilterForm(self.request.GET)
+
+        context["form"] = form
         return context
 
 

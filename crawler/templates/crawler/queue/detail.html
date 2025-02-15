@@ -5,8 +5,8 @@
 
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
-        <li class="breadcrumb-item active text-muted" aria-current="page">Queue - {{ queue.uuid }}</li>
+        <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Queue - {{ queue.pk }}</li>
       </ol>
     </nav>
 

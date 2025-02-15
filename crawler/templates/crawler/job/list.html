@@ -7,7 +7,8 @@
 
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Home</li>
+        <li class="breadcrumb-item"><a href="{% url 'crawler:home' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Jobs</li>
       </ol>
     </nav>
 
@@ -26,33 +27,16 @@
                     {% endif %}
                 </h5>
 
-<!--                <div class="btn-group" role="group">-->
-<!--                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                      Filter-->
-<!--                    </button>-->
-<!--                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">-->
-<!--                      <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=SUCCESS">success</a></li>-->
-<!--                      <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=ERROR">error</a></li>-->
-<!--                      <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=NEW">new</a></li>-->
-<!--                      <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=WAITING">waiting</a></li>-->
-<!--                      <li><a class="dropdown-item" href="{% url 'crawler:job-list' %}?status=NO-ITEM">no-item</a></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-
                 <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
                     Filters
                 </a>
 
             </div>
 
-            {% if filters %}
-                <div class="mt-2">
-                    {% for filter_ in filters %}
-                        <strong><span class="badge rounded-pill bg-secondary">{{ filter_ }}</span></strong>
-                    {% endfor %}
-                    <a class="text-muted" href="{% url 'crawler:job-list' %}">[x]</a>
-                </div>
-            {% endif %}
+            {% with clear_url=None %}
+                {% url 'crawler:job-list' as clear_url %}
+                {% include 'crawler/generic/filter.html' %}
+            {% endwith %}
 
             <div class="collapse" id="collapseFilter">
               <div class="card card-body text-white bg-dark" style="border-color: dimgray">

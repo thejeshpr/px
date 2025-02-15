@@ -4,9 +4,22 @@
 
 {% block content %}
 
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
+<div class="container mt-2">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'crawler:home' %}" class="text-white">
+            <strong>Home</strong></a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">
+            <a href="#" class="text-white"><strong>Other</strong></a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Add Item</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body bg-dark text-white">
             <h5 class="card-title">Create New Item</h5>
             {% if errors %}
                 <div class="alert alert-danger m-2" role="alert">
@@ -16,8 +29,8 @@
             <form method="post">
                 {% csrf_token %}
                 {% bootstrap_form form %}
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                <a href="{% url 'crawler:siteconf-list' %}" class="btn btn-warning btn-sm">Cancel</a>
             </form>
         </div>
     </div>

@@ -30,6 +30,10 @@
     <!-- Custom styles for this template -->
     <link href="https://getbootstrap.com/docs/5.0/examples/navbar-fixed/navbar-top-fixed.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css">
+    <style>
+      {% block extra_headers %}
+      {% endblock %}
+    </style>
   </head>
 
 <!--  <body style="background: #595754">-->
@@ -45,6 +49,9 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
+              <a class="nav-link" href="{% url 'crawler:q-list' %}"><i class="las la-tasks"></i> Queues</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:siteconf-list' %}"><i class="las la-sync"></i> SiteConf</a>
             </li>
             <li class="nav-item">
@@ -52,9 +59,6 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:item-list' %}"><i class="las la-tasks"></i> Items</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'crawler:q-list' %}"><i class="las la-tasks"></i> Queues</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'crawler:category-list' %}"><i class="las la-cogs"></i> Category</a>
@@ -74,10 +78,10 @@
                 Other
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown-other">
-                <li><a class="dropdown-item" href="{% url 'crawler:category-add' %}">Add Category</a></li>
+<!--                <li><a class="dropdown-item" href="{% url 'crawler:category-add' %}">Add Category</a></li>-->
                 <li><a class="dropdown-item" href="{% url 'crawler:item-add' %}">Add Item</a></li>
                 <li><a class="dropdown-item" href="{% url 'crawler:job-create-bulk' %}">Bulk Job Create</a></li>
-                <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?sc=default">Default SC Items</a></li>
+                <li><a class="dropdown-item" href="{% url 'crawler:item-list' %}?site_conf=default">Default SC Items</a></li>
 
                 <li><a class="dropdown-item" href="#">Data Dump</a></li>
                 <li><a class="dropdown-item" href="#">Bulk Create</a></li>

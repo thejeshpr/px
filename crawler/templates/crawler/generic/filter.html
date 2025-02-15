@@ -1,0 +1,12 @@
+{% if filters %}
+    <div class="mt-2">
+        {% for filter_ in filters %}
+            {% if filter_ == "ns" %}
+                <strong><span class="badge rounded-pill bg-danger">{{ filter_ }}</span></strong>
+            {% else %}
+                <strong><span class="badge rounded-pill bg-secondary">{{ filter_ }}</span></strong>
+            {% endif %}
+        {% endfor %}
+        <a class="text-muted" href="{{ clear_url }}">[x]</a>
+    </div>
+{% endif %}

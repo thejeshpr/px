@@ -61,6 +61,8 @@ class SiteConfFilterForm(forms.Form):
         choices=[('', 'All'), ('true', 'Locked'), ('false', 'Unlocked')],
         required=False
     )
+    ns = forms.BooleanField(required=False, widget=forms.HiddenInput())
+    never_synced = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -108,8 +110,13 @@ class JobFilterForm(forms.Form):
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
+    ns = forms.BooleanField(required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
+        site_conf = None
+        if 'site_conf' in kwargs:
+            site_conf = kwargs.pop('site_conf')
+
         super().__init__(*args, **kwargs)
 
         # Populate category choices using slug
@@ -118,9 +125,12 @@ class JobFilterForm(forms.Form):
         self.fields['category'].choices = category_choices
 
         # Populate site_conf choices using slug
-        site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
-        site_conf_choices = [('', 'All Site Configs')] + list(site_confs)
-        self.fields['site_conf'].choices = site_conf_choices
+        if site_conf:
+            self.fields['site_conf'].choices = site_conf
+        else:
+            site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
+            site_conf_choices = [('', 'All Site Configs')] + list(site_confs)
+            self.fields['site_conf'].choices = site_conf_choices
 
 
 class ItemSearchForm(forms.Form):
@@ -131,25 +141,34 @@ class ItemSearchForm(forms.Form):
     #     choices=[('', 'All Statuses')] + list(Item.I),
     #     required=False
     # )
-    is_bookmarked = forms.ChoiceField(
-        choices=[('', 'All'), ('1', 'Yes'), ('0', 'No')],
-        required=False
-    )
+    # is_bookmarked = forms.ChoiceField(
+    #     choices=[('', 'All'), ('1', 'Yes'), ('0', 'No')],
+    #     required=False
+    # )
+    is_bookmarked = forms.BooleanField(required=False, label="Show Bookmarked Items")
     created_at = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
+    ns = forms.BooleanField(required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
+        site_conf = None
+        if 'site_conf' in kwargs:
+            site_conf = kwargs.pop('site_conf')
+
         super().__init__(*args, **kwargs)
 
         # Populate category choices using slug
         categories = Category.objects.values_list('slug', 'slug').distinct()
         self.fields['category'].choices = [('', 'All Categories')] + list(categories)
 
-        # Populate site_conf choices using slug
-        site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
-        self.fields['site_conf'].choices = [('', 'All Site Configs')] + list(site_confs)
+                # Populate site_conf choices using slug
+        if site_conf:
+            self.fields['site_conf'].choices = site_conf
+        else:
+            site_confs = SiteConf.objects.values_list('slug', 'slug').distinct()
+            self.fields['site_conf'].choices = [('', 'All Site Configs')] + list(site_confs)
 
         # Populate status choices dynamically from model
         # status_choices = Item.objects.values_list('status', 'status').distinct()
