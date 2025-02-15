@@ -11,9 +11,29 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from .forms import SiteConfFormByJSON
+from .forms import SiteConfFormByJSON, SiteConfFilterForm
 from .job_views import InvokeBackend
 from .models import SiteConf, Category
+
+def convert_qp_to_qf(request, type_):
+    """
+    this function converts query params to query filter
+    :param request:
+    :return:
+    """
+    col_mapping = {
+        "site_conf": {
+            "cat": "category__slug",
+            "scraper": "scraper_name"
+        }
+    }
+
+    filters = dict()
+    for key, val in request.GET.items():
+        if key.startswith('f-'):
+            k = key[2:]
+            if k in col_mapping[type_]:
+                filters[col_mapping[type_][k]] = val
 
 
 class SiteConfListView(ListView):
@@ -25,13 +45,76 @@ class SiteConfListView(ListView):
 
     def get_queryset(self):
         ten_days_ago = timezone.now() - timedelta(days=10)
-        return SiteConf.objects.annotate(
+        ns_flag = True if self.request.GET.get('ns', 'no').lower() == "yes" else False
+        # cat = self.request.GET.get('cat', '').strip()
+        # scraper = self.request.GET.get('scraper', '').strip()
+        # enabled = self.request.GET.get('enabled', '').strip()
+        # locked = self.request.GET.get('locked', '').strip()
+
+        self.filters = []
+
+        qry = SiteConf.objects.annotate(
             is_old=Case(
                 When(Q(last_successful_sync__lt=ten_days_ago) | Q(last_successful_sync__isnull=True), then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField()
             )
-        ).order_by('-id')
+        )
+
+        form = SiteConfFilterForm(self.request.GET)
+        if form.is_valid():
+            if form.cleaned_data['category']:
+                qry = qry.filter(category__slug=form.cleaned_data['category'])
+                self.filters.append(form.cleaned_data['category'])
+
+            if form.cleaned_data['scraper_name']:
+                qry = qry.filter(scraper_name=form.cleaned_data['scraper_name'])
+                self.filters.append(form.cleaned_data['scraper_name'])
+
+            if form.cleaned_data['enabled']:
+                enabled = form.cleaned_data['enabled'] == "true"
+                qry = qry.filter(enabled=enabled)
+                self.filters.append(f"enabled={enabled}")
+
+            if form.cleaned_data['is_locked']:
+                is_locked = form.cleaned_data['is_locked'] == "true"
+                qry = qry.filter(is_locked=is_locked)
+                self.filters.append(f"is_locked={is_locked}")
+
+        if ns_flag:
+            qry = qry.exclude(ns_flag=False)
+        else:
+            qry = qry.exclude(ns_flag=True)
+
+        return qry.order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+
+        filter_qs = [
+            self.request.GET.get('cat'),
+            self.request.GET.get('scraper', '').strip(),
+        ]
+
+        if self.request.GET.get('enabled'):
+            if self.request.GET.get('enabled') == 'yes':
+                filter_qs.append('enabled-yes')
+            else:
+                filter_qs.append('enabled-no')
+
+        if self.request.GET.get('locked'):
+            if self.request.GET.get('locked') == 'yes':
+                filter_qs.append('locked-yes')
+            else:
+                filter_qs.append('locked-no')
+
+        context['filters'] = list(filter(lambda x: x not in [None, ''], self.filters))
+        # scrapers = SiteConf.objects.exclude(scraper_name__isnull=True).values('scraper_name').distinct()
+        # context['scrapers'] = [scraper.get("scraper_name") for scraper in scrapers if scraper]
+        context['form'] = SiteConfFilterForm(self.request.GET)
+        return context
+
 
 class SiteConfDetailView(DetailView):
     model = SiteConf
