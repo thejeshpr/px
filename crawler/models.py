@@ -28,14 +28,14 @@ class SiteConf(models.Model):
     enabled = models.BooleanField(default=True, db_index=True)
     extra_data_json = models.TextField(blank=True, null=True, default="{}")
     is_locked = models.BooleanField(default=False, db_index=True)
+    last_successful_sync = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=50, unique=True, db_index=True)
-    slug = models.SlugField(max_length=50, unique=True, db_index=True)
     notes = models.TextField(blank=True, null=True)
     ns_flag = models.BooleanField(default=False, db_index=True)
     scraper_name = models.CharField(max_length=25, blank=True, null=True)
+    slug = models.SlugField(max_length=50, unique=True, db_index=True)
     store_raw_data = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
-    last_successful_sync = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return str(self.name)

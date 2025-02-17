@@ -52,9 +52,7 @@ urlpatterns = [
 
     path('item-ns/', item_views.ns_item_list_view_wrapper, name='item-list-ns'),
 
-
-    # path('network-graph/', test_views.network_graph, name='network_graph'),
-
-    # path('job/run/', job_views, name='job-run'),
+    path('data/bulk/dump', views.DataDump.as_view(), name='data-bulk-dump'),
+    path('data/bulk/create', views.DataBulkCreate.as_view(), name='data-bulk-create'),
 
 ]

@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 import json
 import uuid
@@ -11,9 +12,11 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from .forms import SiteConfFormByJSON, SiteConfFilterForm
+from .forms import SiteConfFormByJSON, SiteConfFilterForm, BulkCreateForm
 from .job_views import InvokeBackend
-from .models import SiteConf, Category
+from .models import SiteConf, Category, ConfigValues
+
+logger = logging.getLogger(__name__)
 
 def convert_qp_to_qf(request, type_):
     """
@@ -221,3 +224,84 @@ def crawl(request, slug):
         return redirect(f'/job/{ib.job.id}')
 
     return JsonResponse({"status": "OK", "message": f"Crawling Started, job_id: {ib.job.id}"})
+
+
+class DataDump(View):
+    def get(self, request):
+        categories = list(Category.objects.values('name'))
+        config_values = list(ConfigValues.objects.values('key', 'val'))
+
+        site_confs = list(SiteConf.objects.values(
+            'base_url',
+            'category__name',
+            'enabled',
+            "extra_data_json",
+            "is_locked",
+            "last_successful_sync",
+            "name",
+            "notes",
+            "ns_flag",
+            "scraper_name",
+            "slug",
+            "store_raw_data"
+        ))
+        return JsonResponse({
+            "categories": categories,
+            "config_values": config_values,
+            "site_confs": site_confs
+        })
+
+
+
+# @method_decorator(login_required(login_url='/login/'), name='dispatch')
+class DataBulkCreate(FormView):
+    template_name = 'crawler/generic/data_bulk_create.html'
+    form_class = BulkCreateForm
+    success_url = reverse_lazy('crawler:siteconf-list')
+
+    def form_valid(self, form):
+        data = json.loads(form.cleaned_data.get("data"))
+
+        # create categories
+        for entry in data['categories']:
+            logger.debug("creating categories is not exists: {entry}")
+            Category.objects.get_or_create(name=entry['name'])
+
+        # create config-values
+        for entry in data['config_values']:
+            logger.debug("creating config-values is not exists: {entry}")
+            ConfigValues.objects.get_or_create(
+                key=entry.get('key'),
+                val=entry.get('val'),
+            )
+
+        # create site_confs
+        slug_list = [x['slug'] for x in data['site_confs']]
+        db_obj = SiteConf.objects.filter(slug__in=slug_list)
+        existing_sc_slug = [sc.slug for sc in db_obj]
+
+        sc_objs_to_create = []
+        for entry in data['site_confs']:
+            logger.debug(f"creating site-confs if not exists")
+            if entry['slug'] not in existing_sc_slug:
+                if entry.get('category'):
+                    cat = Category.objects.get(name=entry.get('category'))
+                else:
+                    cat = None
+
+                sc_objs_to_create.append(SiteConf(
+                    base_url=entry.get("base_url"),
+                    category=cat,
+                    enabled=entry.get("enabled"),
+                    extra_data_json=entry.get("extra_data_json"),
+                    is_locked=False,
+                    last_successful_sync=None,
+                    name=entry.get("name"),
+                    notes=entry.get("notes"),
+                    ns_flag=entry.get("ns_flag"),
+                    scraper_name=entry.get("scraper_name"),
+                    store_raw_data=entry.get("store_raw_data")
+                ))
+        res = SiteConf.objects.bulk_create(sc_objs_to_create)
+        logger.debug(res)
+        return super().form_valid(form)
