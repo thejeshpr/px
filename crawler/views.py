@@ -295,7 +295,7 @@ class DataBulkCreate(FormView):
 
             sc = SiteConf(
                     base_url=entry.get("base_url"),
-                    category=Category.get(entry.get('category'), None),
+                    category=categories.get(entry.get('category'), None),
                     enabled=entry.get("enabled"),
                     extra_data_json=entry.get("extra_data_json"),
                     is_locked=False,
