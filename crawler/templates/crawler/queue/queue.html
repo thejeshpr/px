@@ -1,7 +1,7 @@
 <div>
     <code class="text-white">
-        <span class="badge bg-secondary"><strong>#{{ queue.id }}</strong></span>
-        <a class="text-white" href="{% url 'crawler:q-detail' queue.pk %}">{{ queue.uuid|truncatechars:"6" }}</a>
+        <span class="badge bg-{{ queue.ns_flag|yesno:'danger,secondary' }}"><strong>#{{ queue.id }}</strong></span>
+        <a class="text-white" href="{% url 'crawler:q-detail' queue.pk %}">{{ queue.pk }}</a>
 
 
         <div class="float-end">

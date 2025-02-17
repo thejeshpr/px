@@ -42,6 +42,7 @@ class SiteConfFormByJSON(forms.Form):
 
 class BulJobForm(forms.Form):
     site_confs = forms.CharField(widget=forms.Textarea, required=True)
+    ns = forms.BooleanField(required=False, widget=forms.HiddenInput())
 
 
 # class SiteConfFilterForm(forms.Form):

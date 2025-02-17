@@ -11,10 +11,10 @@ from django.urls import reverse_lazy
 from .models import JobQueue, SiteConf, Job
 from django.http import HttpResponse, JsonResponse
 
-def get_waiting_q():
-    q = JobQueue.objects.filter(status="WAITING")
+def get_waiting_q(ns=False):
+    q = JobQueue.objects.filter(status="WAITING", ns_flag=ns)
     if not q:
-        q = JobQueue.objects.create()
+        q = JobQueue.objects.create(ns_flag=ns)
     else:
         q = q.first()
 

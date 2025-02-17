@@ -19,9 +19,9 @@ class Command(BaseCommand):
     #     parser.add_argument("wait_time", type=int, default=0)
 
     def handle(self, *arg, **options):
-        job_queues = JobQueue.objects.filter(status="WAITING").order_by("-id").all()
+        job_queues = JobQueue.objects.filter(status="WAITING").order_by("id").all()
         if not job_queues:
-            print("No Queues to process")
+            logger.debug("No Queues to process")
 
         errors = []
 
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 q.processed_at = timezone.now()
                 q.save()
 
-                print(f"processing q: {q}")
+                logger.info(f"processing q: {q}")
                 for job in q.jobs.all():
                     logger.info(f"processing job: {job}")
                     handler_obj = Handler(job, 0)
@@ -44,6 +44,7 @@ class Command(BaseCommand):
                 q.status = "ERROR"
                 # q.error = str(traceback.format_exc())
                 errors.append(str(traceback.format_exc()))
+                logger.error(traceback.format_exc())
                 continue
 
             finally:
@@ -51,8 +52,10 @@ class Command(BaseCommand):
                     q.status = "ERROR"
                     errs = "\n\n".join(errors)
                     q.error = f"One or More job failed in this Queue:\n {errs}"
+                    logger.error("updating queue status to error")
                 else:
                     q.status = "COMPLETED"
+                    logger.error("updating queue status to completed")
 
                 q.save()
 

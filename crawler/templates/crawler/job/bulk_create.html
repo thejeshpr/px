@@ -45,14 +45,19 @@
             </div>
 
             <!-- Form -->
-            <form action="{% url 'crawler:job-create-bulk'%}" method="GET">
-                <div class="mb-3">
+            <form id="frm-bulk" action="{% url 'crawler:job-create-bulk'%}" method="GET">
+                <div class="mb-2">
                     <label for="itemValues" class="form-label text-white">Selected Items:</label>
                     <textarea id="itemValues" name="sc" class="form-control" rows="3" style="background-color: #1e1e1e;color: #ffffff;border-color: #333;" required></textarea>
                 </div>
 
+                <div class="form-check d-none">
+                  <input type="checkbox" name="ns" class="form-check-input" value="" id="chk-ns"/>
+                  <label class="form-check-label" for="chk-ns">ns</label>
+                </div>
+
                 <!-- Code Element with Copy Button -->
-                <div class="mb-3">
+                <div class="mt-2 mb-3">
                     <label class="form-label text-white">URL:</label>
                     <div class="d-flex align-items-center">
                         <pre class="flex-grow-1 m-0" style="background-color: #222;color: #00ffcc;border: 1px solid #444;"><code id="codeOutput" class="d-block p-2 rounded">https://</code></pre>
@@ -75,7 +80,13 @@
 <script>
     $(document).ready(function() {
         let selectedItems = [];
+        let ns = "{{ ns }}";
         let preText = "{% url 'crawler:job-create-bulk'%}?sc=";
+        if(ns.trim()){
+            preText = "{% url 'crawler:job-create-bulk'%}?ns=on&sc=";
+            $("#chk-ns").attr('checked', true);
+            $("#chk-ns").attr('value', "yes");
+        }
 
         // Individual "Add" button functionality
         $(".btn-add").click(function() {
@@ -138,7 +149,9 @@
         // Function to update textarea and code output
         function updateTextAreaAndCode() {
             $("#itemValues").val(selectedItems.join(","));
-            $("#codeOutput").text(preText + selectedItems.join(","));
+            let url = preText + selectedItems.join(",")
+            $("#codeOutput").text(url);
+            console.log($("#chk-ns").attr('checked'));
         }
     });
 </script>

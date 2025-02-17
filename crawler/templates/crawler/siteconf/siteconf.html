@@ -23,9 +23,9 @@
                   actions
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                  <li><a class="dropdown-item" href="#">edit</a></li>
-                  <li><a class="dropdown-item" href="#">duplicate</a></li>
-                  <li><a class="dropdown-item" href="#">delete</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:siteconf-edit' siteconf.slug %}">edit</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:siteconf-duplicate' siteconf.slug %}">duplicate</a></li>
+                  <li><a class="dropdown-item" href="{% url 'crawler:siteconf-delete' siteconf.slug %}">delete</a></li>
                 </ul>
             </div>
         </div>

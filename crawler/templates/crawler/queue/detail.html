@@ -14,9 +14,8 @@
         <div class="card-body">
             <code class="text-white">
                 <strong>ID: {{ queue.id }}</strong><br/>
-                <strong>UUID: {{ queue.uuid }}</strong><br/>
                 <strong>Created at:</strong> {{ queue.created_at |date:'Y-m-d H:i' }}<br/>
-                <strong>Process At:</strong> {{ queue.created_at |date:'Y-m-d H:i' }}<br/>
+                <strong>Process At:</strong> {{ queue.processed_at |date:'Y-m-d H:i' }}<br/>
                 <strong>Status:</strong>{% include 'crawler/queue/status.html' %}<br/>
 
                 {% if queue.error %}

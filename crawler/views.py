@@ -166,6 +166,7 @@ class DuplicateSiteConfListView(View):
         # obj_dict.category = original_obj.category
         obj_dict.pop('id')  # remove the ID field to avoid duplication
         obj_dict.pop('category')
+        obj_dict.pop('last_successful_sync')
 
         new_uuid = uuid.uuid4()
         # Get the last 4 characters of the UUID's hex string

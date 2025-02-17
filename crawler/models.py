@@ -59,17 +59,18 @@ class JobQueue(models.Model):
         ('COMPLETED', 'COMPLETED'),
         ('ERROR', 'ERROR'),
     )
-    uuid = models.UUIDField(default=uuid.uuid4(), max_length=50)
+    # uuid = models.UUIDField(default=uuid.uuid4, max_length=50)
     error = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     processed_at = models.DateTimeField(blank=True, null=True)
+    ns_flag = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=QUEUE_STATUS, default='WAITING')
 
     def __str__(self):
-        return f'Q:{self.uuid}'
+        return f'Q:{self.pk}'
 
     def __repr__(self):
-        return f'Q:{self.uuid}'
+        return f'Q:{self.pk}'
 
 
 class Job(models.Model):

@@ -174,31 +174,41 @@ class JobRawDataView(DetailView):
 
 class BulkJobCreation(View):
     template = "crawler/job/bulk_create.html"
+
     def get(self, request):
         context = dict()
 
         # check if sc is given
         sc = request.GET.get("sc")
-        ns = True if request.GET.get("ns", "no").lower() == "yes" else False
+        ns = request.GET.get("ns", "")
+        ns_flag = True if ns and ns.lower() in ["yes", "on", "true"] else False
+        print(f"ns flag------------------------->: {ns_flag}")
+
 
         sc_slug_exclude_list = ["default", "default-ns"]
         if sc:
+            # import pdb; pdb.set_trace()
             sc_list = sc.split(",")
-            site_confs = SiteConf.objects.filter(slug__in=sc_list, enabled=True).exclude(slug__in=sc_slug_exclude_list).all()
-            q = get_waiting_q()
+            site_confs = SiteConf.objects.filter(slug__in=sc_list, enabled=True).exclude(slug__in=sc_slug_exclude_list).exclude(ns_flag=not ns_flag).all()
+            # if ns_flag:
+            #     site_confs_qry = site_confs_qry.exclude(ns_flag=False)
+            # else:
+            #     site_confs_qry = site_confs_qry.exclude(ns_flag=True)
+            q = get_waiting_q(ns=ns_flag)
             jobs_list = [Job(site_conf=sc, category=sc.category, queue=q) for sc in site_confs]
             res = Job.objects.bulk_create(jobs_list)
             return redirect(reverse_lazy('crawler:q-list'))
 
         qry = SiteConf.objects.filter(enabled=True).exclude(slug__in=sc_slug_exclude_list)
 
-        if ns:
-            qry = qry.exclude(ns_flag=False)
-        else:
-            qry = qry.exclude(ns_flag=True)
+        # if ns_flag:
+        #     qry = qry.exclude(ns_flag=False)
+        # else:
+        #     qry = qry.exclude(ns_flag=True)
+        qry = qry.exclude(ns_flag=not ns_flag)
 
         context["site_confs"] = qry.order_by("-id")
+        context["ns"] = "on" if ns else ""
         return render(request, self.template, context=context)
-
 
 
