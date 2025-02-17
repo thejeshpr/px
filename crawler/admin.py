@@ -3,7 +3,7 @@ from .models import SiteConf, Category, Job, Item, ConfigValues, JobQueue
 
 @admin.register(SiteConf)
 class SiteConfAdmin(admin.ModelAdmin):
-    list_display = ('name', 'base_url', 'category', 'enabled', 'is_locked', 'ns_flag', 'scraper_name', 'updated_at')
+    list_display = ('name', 'slug', 'base_url', 'category', 'enabled', 'is_locked', 'ns_flag', 'scraper_name', 'updated_at')
     list_filter = ('enabled', 'is_locked', 'ns_flag', 'category', 'updated_at')
     search_fields = ('name', 'base_url', 'scraper_name', 'slug', 'notes')
     prepopulated_fields = {'slug': ('name',)}
