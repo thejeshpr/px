@@ -20,7 +20,7 @@ urlpatterns = [
     path('sc/<slug:slug>/', views.SiteConfDetailView.as_view(), name='siteconf-detail'),
     path('sc/<slug:slug>/edit/', views.SiteConfUpdateView.as_view(), name='siteconf-edit'),
     path('sc/<slug:slug>/delete/', views.SiteConfDeleteView.as_view(), name='siteconf-delete'),
-    path('sc/<slug:slug>/crawl/', views.crawl, name='siteconf-crawl'),
+    # path('sc/<slug:slug>/crawl/', views.crawl, name='siteconf-crawl'),
     path('sc/<slug:slug>/duplicate/', views.DuplicateSiteConfListView.as_view(), name='siteconf-duplicate'),
     path('sc/<slug:slug>/add-to-q/', q_views.QueueCreateView.as_view(), name='siteconf-create-q'),
 
@@ -48,9 +48,6 @@ urlpatterns = [
     path('item/', item_views.ItemListView.as_view(), name='item-list'),
     path('item/add/', item_views.ItemCreateView.as_view(), name='item-add'),
     path('item/<int:pk>/toggle-bookmark', item_views.toggle_bookmark, name='item-bookmark'),
-    # path('item/bookmarks', item_views.BookmarkItemListView.as_view(), name='item-bookmark-list'),
-
-    path('item-ns/', item_views.ns_item_list_view_wrapper, name='item-list-ns'),
 
     path('data/bulk/dump', views.DataDump.as_view(), name='data-bulk-dump'),
     path('data/bulk/create', views.DataBulkCreate.as_view(), name='data-bulk-create'),

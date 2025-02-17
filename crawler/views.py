@@ -48,7 +48,6 @@ class SiteConfListView(ListView):
 
     def get_queryset(self):
         ten_days_ago = timezone.now() - timedelta(days=10)
-        # ns_flag = True if self.request.GET.get('ns', 'no').lower() == "yes" else False
 
         self.filters = []
 
@@ -90,11 +89,6 @@ class SiteConfListView(ListView):
                 qry = qry.filter(last_successful_sync__isnull=True)
                 self.filters.append('never-synced')
 
-
-        # if ns_flag:
-        #     qry = qry.exclude(ns_flag=False)
-        # else:
-        #     qry = qry.exclude(ns_flag=True)
         return qry.order_by('-id')
 
     def get_context_data(self, **kwargs):
@@ -112,6 +106,7 @@ class SiteConfDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        category = context['siteconf'].category.name if context['siteconf'].category else ""
         json_data = dict(
             name=context['siteconf'].name,
             base_url=context['siteconf'].base_url,
@@ -119,7 +114,7 @@ class SiteConfDetailView(DetailView):
             is_locked=context['siteconf'].is_locked,
             scraper_name=context['siteconf'].scraper_name,
             ns_flag=context['siteconf'].ns_flag,
-            category=context['siteconf'].category.name,
+            category=category,
             store_raw_data=context['siteconf'].store_raw_data
         )
 
@@ -162,8 +157,6 @@ class SiteConfDeleteView(DeleteView):
 
 class DuplicateSiteConfListView(View):
     def get(self, request, *args, **kwargs):
-        # sc: SiteConf = get_object_or_404(SiteConf, pk=pk)
-
         original_obj = get_object_or_404(SiteConf, slug=kwargs['slug'])
         obj_dict = model_to_dict(original_obj)
         # obj_dict.category = original_obj.category
@@ -206,24 +199,24 @@ class SiteConfByJSONView(FormView):
         return super().form_valid(form)
 
 
-def crawl(request, slug):
-    wait_time = int(request.GET.get("wait_time", 0))
-    site_conf: SiteConf = get_object_or_404(SiteConf, slug=slug)
-
-    if not site_conf.enabled:
-        return JsonResponse({'status': 'ERROR', 'message': 'SiteConf crawling is disabled'})
-
-    if site_conf.is_locked:
-        return JsonResponse({'status': 'ERROR', 'message': 'Crawling In-progress'})
-
-    ib = InvokeBackend(site_conf, wait_time=wait_time)
-
-    flag = request.GET.get("redirect_to_job")
-
-    if flag and flag.lower() == 'yes':
-        return redirect(f'/job/{ib.job.id}')
-
-    return JsonResponse({"status": "OK", "message": f"Crawling Started, job_id: {ib.job.id}"})
+# def crawl(request, slug):
+#     wait_time = int(request.GET.get("wait_time", 0))
+#     site_conf: SiteConf = get_object_or_404(SiteConf, slug=slug)
+#
+#     if not site_conf.enabled:
+#         return JsonResponse({'status': 'ERROR', 'message': 'SiteConf crawling is disabled'})
+#
+#     if site_conf.is_locked:
+#         return JsonResponse({'status': 'ERROR', 'message': 'Crawling In-progress'})
+#
+#     ib = InvokeBackend(site_conf, wait_time=wait_time)
+#
+#     flag = request.GET.get("redirect_to_job")
+#
+#     if flag and flag.lower() == 'yes':
+#         return redirect(f'/job/{ib.job.id}')
+#
+#     return JsonResponse({"status": "OK", "message": f"Crawling Started, job_id: {ib.job.id}"})
 
 
 class DataDump(View):
@@ -281,21 +274,15 @@ class DataBulkCreate(FormView):
         db_obj = SiteConf.objects.filter(slug__in=slug_list)
         existing_sc_slug = [sc.slug for sc in db_obj]
 
-        sc_objs_to_create = []
         for entry in data['site_confs']:
             logger.debug(f"creating site-confs if not exists")
 
             if entry['slug'] in existing_sc_slug:
                 continue
 
-            # if entry.get('category'):
-            #     cat = Category.objects.get(name=entry.get('category'))
-            # else:
-            #     cat = None
-
             sc = SiteConf(
                     base_url=entry.get("base_url"),
-                    category=categories.get(entry.get('category'), None),
+                    category=categories.get(entry.get('category__name'), None),
                     enabled=entry.get("enabled"),
                     extra_data_json=entry.get("extra_data_json"),
                     is_locked=False,

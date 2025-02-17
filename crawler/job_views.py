@@ -1,6 +1,7 @@
 import datetime
 import sys
 
+from django.contrib import messages
 from django.core import management
 from django.core.management.commands import loaddata
 from django.http import HttpResponse, JsonResponse
@@ -15,7 +16,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 
 from .models import SiteConf, Job, Category
-from .q_views import get_waiting_q
+from .q_views import get_waiting_q, add_to_q
 from .forms import JobFilterForm
 
 
@@ -177,34 +178,30 @@ class BulkJobCreation(View):
 
     def get(self, request):
         context = dict()
+        sc_slug_exclude_list = ["default", "default-ns"]
 
         # check if sc is given
         sc = request.GET.get("sc")
         ns = request.GET.get("ns", "")
         ns_flag = True if ns and ns.lower() in ["yes", "on", "true"] else False
-        print(f"ns flag------------------------->: {ns_flag}")
 
-
-        sc_slug_exclude_list = ["default", "default-ns"]
         if sc:
-            # import pdb; pdb.set_trace()
             sc_list = sc.split(",")
-            site_confs = SiteConf.objects.filter(slug__in=sc_list, enabled=True).exclude(slug__in=sc_slug_exclude_list).exclude(ns_flag=not ns_flag).all()
+            site_confs = SiteConf.objects.filter(slug__in=sc_list).exclude(ns_flag=not ns_flag).all()
+            status = add_to_q(self.request, site_confs=site_confs)
+
+            if status:
+                messages.add_message(request, messages.INFO, "Queue Scheduled")
             # if ns_flag:
             #     site_confs_qry = site_confs_qry.exclude(ns_flag=False)
             # else:
             #     site_confs_qry = site_confs_qry.exclude(ns_flag=True)
-            q = get_waiting_q(ns=ns_flag)
+            """q = get_waiting_q(ns=ns_flag)
             jobs_list = [Job(site_conf=sc, category=sc.category, queue=q) for sc in site_confs]
-            res = Job.objects.bulk_create(jobs_list)
+            res = Job.objects.bulk_create(jobs_list)"""
             return redirect(reverse_lazy('crawler:q-list'))
 
         qry = SiteConf.objects.filter(enabled=True).exclude(slug__in=sc_slug_exclude_list)
-
-        # if ns_flag:
-        #     qry = qry.exclude(ns_flag=False)
-        # else:
-        #     qry = qry.exclude(ns_flag=True)
         qry = qry.exclude(ns_flag=not ns_flag)
 
         context["site_confs"] = qry.order_by("-id")

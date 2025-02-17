@@ -2,14 +2,21 @@ import os
 import subprocess
 import sys
 import time
-import uuid
+import traceback
+from typing import List
+import logging
 
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.urls import reverse_lazy
-from .models import JobQueue, SiteConf, Job
 from django.http import HttpResponse, JsonResponse
+
+from .models import JobQueue, SiteConf, Job
+
+logger = logging.getLogger(__name__)
+
 
 def get_waiting_q(ns=False):
     q = JobQueue.objects.filter(status="WAITING", ns_flag=ns)
@@ -21,20 +28,57 @@ def get_waiting_q(ns=False):
     return q
 
 
+def add_to_q(request, site_confs: List[SiteConf]):
+    """
+    this function adds the given site_confs to waiting Q
+    :param request:
+    :param site_confs:
+    :return:
+    """
+    logger.debug("adding site_confs to Q")
+
+    q = None
+    nsq = None
+    jobs_to_create = list()
+
+    for sc in site_confs:
+        if not sc.enabled or sc.name in ['default', 'default-ns']:
+            continue
+
+        job = Job(site_conf=sc, category=sc.category)
+        if sc.ns_flag:
+            nsq = nsq or get_waiting_q(ns=True)
+            job.queue = nsq
+
+        else:
+            q = q or get_waiting_q()
+            job.queue = q
+
+        jobs_to_create.append(job)
+
+    if not jobs_to_create:
+        logger.debug("no valid site conf found to add to Q")
+        messages.add_message(request, messages.WARNING, "No SiteConfs Added to Q")
+        return False
+
+    created_jobs = Job.objects.bulk_create(jobs_to_create)
+    logger.debug(f"added {len(jobs_to_create)} jobs")
+    messages.add_message(request, messages.INFO, f"added {len(jobs_to_create)} jobs")
+    return True
+
+
 class QueueCreateView(View):
     template_name = 'crawler/queue/list.html'
 
     def get(self, request, *args, **kwargs):
         sc = get_object_or_404(SiteConf, slug=kwargs['slug'])
-        if not sc.enabled:
+        if not sc.enabled or sc.name in ['default', 'default-ns']:
             return JsonResponse(dict(
                 is_success=False,
                 error_message=f"{sc.name} is either locked or not enabled"
             ))
 
-        q = get_waiting_q()
-
-        Job.objects.create(site_conf=sc, category=sc.category, queue=q)
+        add_to_q(request, [sc])
 
         if request.GET.get("force_sync", None) == "yes":
             process_queue()
@@ -47,7 +91,6 @@ class QueueListView(ListView):
     template_name = "crawler/queue/list.html"
     context_object_name = "queues"
     paginate_by = 50  # Pagination
-    # queryset = JobQueue.objects.order_by('-id')
 
     def get_queryset(self):
         status = self.request.GET.get("status")
@@ -88,12 +131,14 @@ def process_queue():
     script_path = os.path.join(base_path, 'manage.py')
     cmd = f'{sys.executable} "{script_path}" process_queues'
 
-    print(f"cmd: {cmd}")
-    print("starting process")
-    # o = subprocess.Popen(cmd, shell=True)
-    envs = os.environ.copy()
-    o = subprocess.Popen(cmd, shell=True, env=envs)
-    print(o)
+    try:
+        logger.debug(f"invoking backend cmd: {cmd}")
+        envs = os.environ.copy()
+        o = subprocess.Popen(cmd, shell=True, env=envs)
+    except Exception as e:
+        err = traceback.format_exc()
+        logger.error(f"ERROR while invoking backend: {err}")
+        raise Exception(e)
 
 
 class ProcessQueues(View):
@@ -106,13 +151,20 @@ class ProcessQueues(View):
             ))
         else:
             msg = f"{len(job_queues)} will be processed"
-            process_queue()
+            try:
+                process_queue()
+            except Exception as e:
+                err = traceback.format_exc()
+                logger.exception(e)
+                messages.add_message(request, messages.ERROR, message=str(err))
 
-            if request.GET.get("get_q_list", "no").lower() == "yes":
-                time.sleep(3)
-                return redirect(reverse_lazy("crawler:q-list"))
+            else:
+                messages.add_message(request, messages.INFO, message="Queue(s) pushed for processing")
+                if request.GET.get("get_q_list", "no").lower() == "yes":
+                    time.sleep(3)
+                    return redirect(reverse_lazy("crawler:q-list"))
 
-            return JsonResponse(dict(
-                status="ok",
-                message=msg
-            ))
+                return JsonResponse(dict(
+                    status="ok",
+                    message=msg
+                ))

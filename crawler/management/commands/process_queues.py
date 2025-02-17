@@ -26,6 +26,7 @@ class Command(BaseCommand):
         errors = []
 
         for q in job_queues:
+            start_time = time.time()
             try:
                 q.status = "PROCESSING"
                 q.processed_at = timezone.now()
@@ -55,7 +56,8 @@ class Command(BaseCommand):
                     logger.error("updating queue status to error")
                 else:
                     q.status = "COMPLETED"
-                    logger.error("updating queue status to completed")
+                    logger.info("updating queue status to completed")
 
+                q.elapsed_time = time.time() - start_time
                 q.save()
 

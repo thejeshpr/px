@@ -9,17 +9,18 @@
         </div><br/>
 
         <small>
-            <span class="text-muted"><i class="las la-calendar"></i> : {{ queue.created_at|date:'d/m/Y h:i:s a' }} <br/></span>
-            <span class="text-muted"><i class="las la-chalkboard"></i> : {{ queue.processed_at|date:'d/m/Y h:i:s a' }}</span>
+            <span class="text-muted"><i class="las la-calendar"></i> : {{ queue.created_at|date:'d/m/Y h:i:s a' }} </span> <br/>
+            <span class="text-muted"><i class="las la-chalkboard"></i> : {{ queue.processed_at|date:'d/m/Y h:i:s a' }}</span><br/>
+            <span class="text-muted"><i class="las la-stopwatch"></i> : {% if queue.elapsed_time %} {{ queue.elapsed_time }} {% endif %}</span>
             <br/>
             <strong>jobs:</strong><br/>
             {% for job in queue.jobs.all %}
                 {% if job.status == "ERROR" %}
-                    <span class="mx-2">- <a class="text-danger" href="{% url 'crawler:job-detail' job.pk %}">{{ job.id }} - {{ job.site_conf.name }} ({{job.items.count}})</a></span><br/>
+                    <span class="mx-2">- <a class="text-danger" href="{% url 'crawler:job-detail' job.pk %}">{{ job.id }} - {{ job.site_conf.name }} ({{job.items.count}})</a>{% if job.elapsed_time %}<span class="text-muted"> - {{job.elapsed_time}}s</span>{% endif %}</span><br/>
                 {% else %}
                     <span class="mx-2">
                         - <strong class="{% if job.status == 'NEW' %}text-muted{% else %}text-success{% endif %}">{{ job.id }} {{ job.site_conf.name }} </strong>
-                        <a class="text-muted" href="{% url 'crawler:job-detail' job.pk %}">[{{job.items.count}}]</a></span><br/>
+                        <a class="text-muted" href="{% url 'crawler:job-detail' job.pk %}">[{{job.items.count}}]</a>{% if job.elapsed_time %}<span class="text-muted"> - {{job.elapsed_time}}s</span>{% endif %}</span><br/>
                 {% endif %}
             {% endfor %}
         </small>

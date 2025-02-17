@@ -60,10 +60,11 @@ class JobQueue(models.Model):
         ('ERROR', 'ERROR'),
     )
     # uuid = models.UUIDField(default=uuid.uuid4, max_length=50)
-    error = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    processed_at = models.DateTimeField(blank=True, null=True)
+    error = models.TextField(blank=True, null=True)
+    elapsed_time = models.IntegerField(blank=True, null=True)
     ns_flag = models.BooleanField(default=False)
+    processed_at = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=QUEUE_STATUS, default='WAITING')
 
     def __str__(self):
