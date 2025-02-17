@@ -10,7 +10,7 @@
             <span class="text-white">{{ item.name }}</span><br/>
             <a href="{{ item.url }}" class="text-muted">{{ item.url|truncatechars:40 }}</a> <br/>
             {% if item.data %}<code class="text-white">{{ item.data }}</code><br/>{% endif %}
-            cat: <a class="text-white" href="{% url 'crawler:item-list' %}?cat={{ item.category.slug }}">{{ item.category.name }}</a>
+            cat: <a class="text-white" href="{% url 'crawler:item-list' %}?{{ request.GET.urlencode }}&category={{ item.category.slug }}">{{ item.category.name }}</a>
             date: <span><a class="text-muted" href="{% url 'crawler:item-list' %}?{{ request.GET.urlencode }}&created_at={{ item.created_at|date:'Y' }}-{{ item.created_at|date:'m' }}-{{ item.created_at|date:'d' }}">{{ item.created_at|date:'d/m/Y h:i:s a' }}</a></span>
         </code>
 <!--        <span class="text-{{ item.is_bookmarked|yesno:'warning,white' }}">*</span>-->
