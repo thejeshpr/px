@@ -228,7 +228,7 @@ def crawl(request, slug):
 
 class DataDump(View):
     def get(self, request):
-        categories = list(Category.objects.values('name'))
+        categories = list(Category.objects.values('name', 'slug'))
         config_values = list(ConfigValues.objects.values('key', 'val'))
 
         site_confs = list(SiteConf.objects.values(
@@ -261,11 +261,12 @@ class DataBulkCreate(FormView):
 
     def form_valid(self, form):
         data = json.loads(form.cleaned_data.get("data"))
+        categories = dict()
 
         # create categories
         for entry in data['categories']:
             logger.debug("creating categories is not exists: {entry}")
-            Category.objects.get_or_create(name=entry['name'])
+            categories[entry['name']], _ = Category.objects.get_or_create(name=entry['name'], slug=entry['slug'])
 
         # create config-values
         for entry in data['config_values']:
@@ -283,15 +284,18 @@ class DataBulkCreate(FormView):
         sc_objs_to_create = []
         for entry in data['site_confs']:
             logger.debug(f"creating site-confs if not exists")
-            if entry['slug'] not in existing_sc_slug:
-                if entry.get('category'):
-                    cat = Category.objects.get(name=entry.get('category'))
-                else:
-                    cat = None
 
-                sc_objs_to_create.append(SiteConf(
+            if entry['slug'] in existing_sc_slug:
+                continue
+
+            # if entry.get('category'):
+            #     cat = Category.objects.get(name=entry.get('category'))
+            # else:
+            #     cat = None
+
+            sc = SiteConf(
                     base_url=entry.get("base_url"),
-                    category=cat,
+                    category=Category.get(entry.get('category'), None),
                     enabled=entry.get("enabled"),
                     extra_data_json=entry.get("extra_data_json"),
                     is_locked=False,
@@ -301,7 +305,8 @@ class DataBulkCreate(FormView):
                     ns_flag=entry.get("ns_flag"),
                     scraper_name=entry.get("scraper_name"),
                     store_raw_data=entry.get("store_raw_data")
-                ))
-        res = SiteConf.objects.bulk_create(sc_objs_to_create)
-        logger.debug(res)
+                )
+            sc.save()
+        # res = SiteConf.objects.bulk_create(sc_objs_to_create)
+        # logger.debug(res)
         return super().form_valid(form)
