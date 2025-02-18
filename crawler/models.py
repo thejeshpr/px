@@ -32,10 +32,19 @@ class SiteConf(models.Model):
     name = models.CharField(max_length=50, unique=True, db_index=True)
     notes = models.TextField(blank=True, null=True)
     ns_flag = models.BooleanField(default=False, db_index=True)
-    scraper_name = models.CharField(max_length=25, blank=True, null=True)
+    scraper_name = models.CharField(max_length=25, blank=True, null=True, db_index=True)
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
     store_raw_data = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    indexes = [
+        models.Index(fields=['slug', 'category', 'is_locked', 'enabled', 'last_successful_sync', 'scraper_name', 'ns_flag']),
+        models.Index(fields=['category', 'is_locked', 'enabled', 'last_successful_sync', 'scraper_name', 'ns_flag']),
+        models.Index(fields=['category', 'ns_flag']),
+        models.Index(fields=['category', 'enabled']),
+        models.Index(fields=['category', 'scraper_name']),
+        models.Index(fields=['category', 'is_locked']),
+    ]
 
     def __str__(self):
         return str(self.name)
@@ -67,6 +76,14 @@ class JobQueue(models.Model):
     processed_at = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=QUEUE_STATUS, default='WAITING')
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['status', 'created_at', 'ns_flag']),
+            models.Index(fields=['created_at', 'ns_flag']),
+            models.Index(fields=['status', 'ns_flag'])
+        ]
+
     def __str__(self):
         return f'Q:{self.pk}'
 
@@ -94,11 +111,23 @@ class Job(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['status', 'site_conf']),  # Composite index for filtering by status/site_conf
+            models.Index(fields=['status', 'site_conf']),
+            models.Index(fields=['status', 'category']),
+            models.Index(fields=['status', 'site_conf', 'category', 'queue', 'created_at']),
+            models.Index(fields=['created_at', 'category']),
+            models.Index(fields=['created_at', 'site_conf']),
+            models.Index(fields=['site_conf', 'category', 'status']),
+            models.Index(fields=['site_conf', 'category', 'created_at']),
         ]
 
     def get_absolute_url(self):
         return reverse('crawler:job-detail', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return f"Job:{self.pk}"
+
+    def __repr__(self):
+        return f"Job:{self.pk}"
 
 
 class Item(models.Model):
@@ -122,8 +151,15 @@ class Item(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['is_bookmarked', 'site_conf']),  # Composite index for filtering
-            models.Index(fields=['name', 'created_at']),  # Sorting/filtering by name and creation time
+            models.Index(fields=['is_bookmarked', 'site_conf']),
+            models.Index(fields=['site_conf', 'created_at', 'is_bookmarked', 'job', 'category']),
+            models.Index(fields=['category', 'site_conf']),
+            models.Index(fields=['category', 'is_bookmarked']),
+            models.Index(fields=['category', 'created_at']),
+            models.Index(fields=['category', 'job']),
+            models.Index(fields=['site_conf', 'job']),
+            models.Index(fields=['site_conf', 'is_bookmarked']),
+
         ]
 
 
