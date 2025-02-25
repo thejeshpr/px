@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, JsonResponse
 
 from .models import JobQueue, SiteConf, Job
+from .forms import QueueFilterForm
 
 logger = logging.getLogger(__name__)
 
@@ -93,12 +94,26 @@ class QueueListView(ListView):
     paginate_by = 50  # Pagination
 
     def get_queryset(self):
-        status = self.request.GET.get("status")
-
         qry = JobQueue.objects
-        if status:
-            status = status.upper()
-            qry = qry.filter(status=status)
+        self.filters = []
+        form = QueueFilterForm(self.request.GET)
+
+        if form.is_valid():
+
+            if form.cleaned_data["created_at"]:
+                dt = form.cleaned_data["created_at"]
+                qry = qry.filter(created_at__year=dt.year, created_at__month=dt.month, created_at__day=dt.day)
+                self.filters.append(form.cleaned_data["created_at"])
+
+            if form.cleaned_data["status"]:
+                qry = qry.filter(status=form.cleaned_data["status"])
+                self.filters.append(form.cleaned_data["status"])
+
+            if form.cleaned_data["ns"]:
+                qry = qry.filter(ns_flag=True)
+                self.filters.append('ns')
+            else:
+                qry = qry.filter(ns_flag=False)
 
         qry = qry.order_by('-id')
         return qry
@@ -108,13 +123,9 @@ class QueueListView(ListView):
         if JobQueue.objects.filter(status="WAITING").count():
             context["q_in_waiting"] = True
 
-        context["header"] = ""
-
-        status = self.request.GET.get("status")
-        if status:
-            context["header"] = status.lower()
-
+        context['filters'] = self.filters
         context["count"] = self.get_queryset().count()
+        context['form'] = QueueFilterForm(self.request.GET)
         return context
 
 

@@ -6,7 +6,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'crawler:job-list' %}" class="text-white">Home</a></li>
         <li class="breadcrumb-item"><a href="{% url 'crawler:siteconf-list' %}" class="text-white">SiteConfs</a></li>
-        <li class="breadcrumb-item active text-dark" aria-current="page">{{ siteconf.name }} ({{ siteconf.pk }})</li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ siteconf.name }} ({{ siteconf.pk }})</li>
       </ol>
     </nav>
 
@@ -54,66 +54,74 @@
 
     <div class="card mt-3 bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">
-                Jobs
-                <small class="text-muted">
-                    ({{ siteconf.jobs.count }})
-                    <a href="{% url 'crawler:job-list' %}?site_conf={{ siteconf.slug }}" class="text-muted">[view all]</a>
-                </small>
-            </h5>
-            <div class="table-responsive bg-dark text-white">
-                <table class="table table-hover table-bordered mt-3 bg-dark" style="border-color: dimgray">
-                    <tbody class="bg-dark">
-                        {% for job in recent_jobs %}
-                        <tr class="bg-dark">
-                            <td>{% include 'crawler/job/job.html' %}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-white">No jobs available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
 
-                <div class="d-flex justify-content-end">
+            <div class="accordion accordion-flush bg-dark text-white" id="accordionFlushExample">
+              <div class="accordion-item bg-dark text-white">
+                <h2 class="accordion-header bg-dark text-white" id="flush-headingOne">
+                  <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    <b>Jobs</b>
+                      &nbsp;<small class="text-muted">[{{ siteconf.jobs.count }}]</small>
+                  </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <div class="table-responsive bg-dark text-white">
+                          <a href="{% url 'crawler:job-list' %}?site_conf={{ siteconf.slug }}" class="link-secondary">[view all]</a>
+                            <table class="table table-hover table-bordered mt-3 bg-dark" style="border-color: dimgray">
+                                <tbody class="bg-dark">
+                                    {% for job in recent_jobs %}
+                                    <tr class="bg-dark">
+                                        <td>{% include 'crawler/job/job.html' %}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-white">No jobs available.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
 
+                            <div class="d-flex justify-content-end">
+                            </div>
+
+                        </div>
+                  </div>
                 </div>
+              </div>
 
+              <div class="accordion-item bg-dark text-white">
+                <h2 class="accordion-header bg-dark text-white" id="flush-headingTwo">
+                  <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    <b>Items</b>&nbsp;
+                    <small class="text-muted">({{ siteconf.items.count }})</small>
+                  </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <div class="table-responsive bg-dark text-white">
+                            <a href="{% url 'crawler:item-list' %}?site_conf={{ siteconf.slug }}" class="text-muted">[view all]</a>
+                            <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
+                                <tbody>
+                                    {% for item in recent_items %}
+                                    <tr>
+                                        <td>
+                                            {% include 'crawler/item/item.html' %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-white">No Items available.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
     </div>
-
-
-    <div class="card mt-2 bg-dark text-white">
-        <div class="card-body">
-            <h5 class="card-title">
-                Items
-                <small class="text-muted">({{ siteconf.items.count }})
-                    <a href="{% url 'crawler:item-list' %}?site_conf={{ siteconf.slug }}" class="text-muted">[view all]</a>
-                </small>
-            </h5>
-            <div class="table-responsive bg-dark text-white">
-                <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
-                    <tbody>
-                        {% for item in recent_items %}
-                        <tr>
-                            <td>
-                                {% include 'crawler/item/item.html' %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-white">No Items available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-
 
 </div>
 {% endblock %}

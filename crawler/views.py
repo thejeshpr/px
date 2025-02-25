@@ -3,6 +3,7 @@ from datetime import timedelta
 import json
 import uuid
 
+from django.contrib import messages
 from django.db.models import Case, When, Value, BooleanField, Q
 from django.forms import model_to_dict
 from django.http import JsonResponse
@@ -256,23 +257,34 @@ class DataBulkCreate(FormView):
         data = json.loads(form.cleaned_data.get("data"))
         categories = dict()
 
+        created_objects = dict(
+            categories=0,
+            site_confs=0,
+            config_values=0
+        )
         # create categories
         for entry in data['categories']:
-            logger.debug("creating categories is not exists: {entry}")
-            categories[entry['name']], _ = Category.objects.get_or_create(name=entry['name'], slug=entry['slug'])
+            logger.debug(f"creating categories if not exists: {entry}")
+            categories[entry['name']], created = Category.objects.get_or_create(name=entry['name'], slug=entry['slug'])
+
+            if created:
+                created_objects["categories"] = created_objects["categories"] + 1
 
         # create config-values
         for entry in data['config_values']:
             logger.debug("creating config-values is not exists: {entry}")
-            ConfigValues.objects.get_or_create(
+            _, created = ConfigValues.objects.get_or_create(
                 key=entry.get('key'),
                 val=entry.get('val'),
             )
 
+            if created:
+                created_objects["config_values"] = created_objects["config_values"] + 1
+
         # create site_confs
         slug_list = [x['slug'] for x in data['site_confs']]
-        db_obj = SiteConf.objects.filter(slug__in=slug_list)
-        existing_sc_slug = [sc.slug for sc in db_obj]
+        existing_db_obj = SiteConf.objects.filter(slug__in=slug_list)
+        existing_sc_slug = [sc.slug for sc in existing_db_obj]
 
         for entry in data['site_confs']:
             logger.debug(f"creating site-confs if not exists")
@@ -282,7 +294,7 @@ class DataBulkCreate(FormView):
 
             sc = SiteConf(
                     base_url=entry.get("base_url"),
-                    category=categories.get(entry.get('category__name'), None),
+                    category=categories.get(entry.get('category__name', None), {}),
                     enabled=entry.get("enabled"),
                     extra_data_json=entry.get("extra_data_json"),
                     is_locked=False,
@@ -294,6 +306,10 @@ class DataBulkCreate(FormView):
                     store_raw_data=entry.get("store_raw_data")
                 )
             sc.save()
-        # res = SiteConf.objects.bulk_create(sc_objs_to_create)
-        # logger.debug(res)
+            created_objects["site_confs"] = created_objects["site_confs"] + 1
+
+        msg = (f'Created - Categories:{created_objects["categories"]}, '
+               f'ConfigValues:{created_objects["config_values"]}, '
+               f'SiteConf:{created_objects["site_confs"]}')
+        messages.add_message(self.request, messages.INFO, message=msg)
         return super().form_valid(form)

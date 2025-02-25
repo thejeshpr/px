@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.core.exceptions import ValidationError
 
-from crawler.models import Category, SiteConf, Job, Item
+from crawler.models import Category, SiteConf, Job, Item, JobQueue
 
 
 #
@@ -188,3 +188,15 @@ class BulkCreateForm(forms.Form):
             except Exception as e:
                 self.add_error(None, ValidationError(f"Invalid JSON Data: {e}"))
         return cleaned_data
+
+
+class QueueFilterForm(forms.Form):
+    status = forms.ChoiceField(
+        choices=[('', 'All Statuses')] + list(JobQueue.QUEUE_STATUS),
+        required=False
+    )
+    created_at = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
+    ns = forms.BooleanField(required=False, widget=forms.HiddenInput())

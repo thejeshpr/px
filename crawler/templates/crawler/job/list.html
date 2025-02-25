@@ -19,12 +19,6 @@
                 <h5 class="card-title mb-0">
                     Jobs
                     <span class="text-muted">({{ count }})</span>
-                    {% if header %}
-                        <strong><span class="badge rounded-pill bg-secondary">{{ header }}</span></strong>
-                        <small>
-                            <a href="{% url 'crawler:job-list' %}" class="text-white text-muted">X</a>
-                        </small>
-                    {% endif %}
                 </h5>
 
                 <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">

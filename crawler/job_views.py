@@ -98,7 +98,6 @@ class JobListView(ListView):
                 self.filters.append(form.cleaned_data["site_conf"])
 
             if form.cleaned_data["created_at"]:
-                print(form.cleaned_data["created_at"])
                 dt = form.cleaned_data["created_at"]
                 qry = qry.filter(created_at__year=dt.year, created_at__month=dt.month, created_at__day=dt.day)
                 self.filters.append(form.cleaned_data["created_at"])

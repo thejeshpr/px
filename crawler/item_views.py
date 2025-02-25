@@ -84,7 +84,7 @@ class ItemListView(ListView):
 
             if form.cleaned_data["is_bookmarked"]:
                 qry = qry.filter(is_bookmarked=form.cleaned_data["is_bookmarked"])
-                self.filters.append(f'bookmarked:{form.cleaned_data["is_bookmarked"]}')
+                self.filters.append(f'bookmarked')
 
             if form.cleaned_data["ns"]:
                 qry = qry.filter(site_conf__ns_flag=True)
