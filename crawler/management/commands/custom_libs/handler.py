@@ -108,7 +108,8 @@ class Handler:
                     data=kwargs.get("data"),
                     job=self.job,
                     site_conf=self.sc,
-                    category=self.sc.category
+                    category=self.sc.category,
+                    queue=self.job.queue
                 )
             )
 

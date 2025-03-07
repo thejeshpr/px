@@ -1,0 +1,30 @@
+{% extends "fleet/base.html" %}
+{% block content %}
+<div class="container mt-5">
+
+     <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:home' %}" class="text-white"><strong>Home</strong></a></li>
+          <li class="breadcrumb-item"><a href="{% url 'fleet:ship-config-list' %}" class="text-white"><strong>ShipConfig</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ ship_config.key }}</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <code class="text-white">
+                <span><strong>Key:</strong> {{ ship_config.key }}</span><br/>
+                <span><strong>Value:</strong> {{ ship_config.val }}</span>
+            </code>
+            <br/>
+            <hr/>
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a href="{% url 'fleet:ship-config-edit' ship_config.slug %}" class="btn btn-sm btn-outline-secondary">edit</a>
+                <a href="{% url 'fleet:ship-config-delete' ship_config.slug %}" class="btn btn-sm btn-outline-secondary">delete</a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

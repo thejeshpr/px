@@ -1,0 +1,21 @@
+{% extends "fleet/base.html" %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Create New ConfigValue</h5>
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{% url 'fleet:ship-config-list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

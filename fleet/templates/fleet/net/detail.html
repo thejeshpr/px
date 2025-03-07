@@ -1,0 +1,68 @@
+{% extends "fleet/base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:home' %}" class="text-white">
+            <strong>Home</strong></a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">
+            <a href="{% url 'fleet:net-list' %}" class="text-white"><strong>Net</strong></a>
+        </li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ net.pk }}</li>
+      </ol>
+    </nav>
+    
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <code class="text-white">
+                <strong>ID: {{ net.id }}</strong><br/>
+                <strong>Fisherman:</strong> <a class="text-white" href="{% url 'fleet:fisherman-detail' net.fisherman.slug %}">{{ net.fisherman }}</a><br/>
+                <strong>Status:</strong>{% include 'fleet/net/status.html' %}<br/>
+                <strong>Deployed At:</strong> {{ net.deployed_at |date:'Y-m-d H:i' }}<br/>
+                <strong>Time in water:</strong> {{ net.time_in_water }}s<br/>
+
+                {% if net.status == "DAMAGED" %}
+                    <br/><strong>Problem:</strong><br/>
+                    <code class="text-danger">{{ net.problem }}</code>
+                {% endif %}
+
+            </code>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-white mt-2">
+        <div class="card-body">
+            <h5 class="card-title">Fishes <small><a href="{% url 'fleet:net-raw-data' net.pk %}" class="text-white text-muted">[fishing info]</a></small></h5>
+            <div class="table-responsive bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
+                    <tbody>
+                        {% for fish in net.fishes.all %}
+                        <tr>
+                            <td>
+                                <div>
+                                    {% include 'fleet/fish/fish.html' %}
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-white">No Fishes available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block jscontent %}
+{% include 'fleet/fish/toggle_tag.html' %}
+{% endblock %}

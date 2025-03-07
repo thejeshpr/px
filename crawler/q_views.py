@@ -15,6 +15,7 @@ from django.http import HttpResponse, JsonResponse
 
 from .models import JobQueue, SiteConf, Job
 from .forms import QueueFilterForm
+from .other_libs import check_if_ns_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -110,8 +111,9 @@ class QueueListView(ListView):
                 self.filters.append(form.cleaned_data["status"])
 
             if form.cleaned_data["ns"]:
-                qry = qry.filter(ns_flag=True)
-                self.filters.append('ns')
+                if check_if_ns_enabled(self.request):
+                    qry = qry.filter(ns_flag=True)
+                    self.filters.append('ns')
             else:
                 qry = qry.filter(ns_flag=False)
 

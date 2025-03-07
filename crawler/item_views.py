@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 
 from .models import SiteConf, Job, Item, Category
 from .forms import ItemCreateForm, ItemSearchForm
+from .other_libs import check_if_ns_enabled
 
 
 class ItemCreateView(View):
@@ -87,8 +88,9 @@ class ItemListView(ListView):
                 self.filters.append(f'bookmarked')
 
             if form.cleaned_data["ns"]:
-                qry = qry.filter(site_conf__ns_flag=True)
-                self.filters.append('ns')
+                if check_if_ns_enabled(self.request):
+                    qry = qry.filter(site_conf__ns_flag=True)
+                    self.filters.append('ns')
             else:
                 qry = qry.filter(site_conf__ns_flag=False)
 

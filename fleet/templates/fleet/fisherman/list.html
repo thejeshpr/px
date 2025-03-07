@@ -1,0 +1,74 @@
+{% extends "fleet/base.html" %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:home' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Fishers</li>
+      </ol>
+    </nav>
+
+    {% include 'fleet/generic/show_messages.html' %}
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                    Fishers
+                    <span class="text-muted">({{ fishers|length }})</span>
+                </h5>
+
+                <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
+                    <i class="las la-filter"></i>
+                </a>
+            </div>
+
+            {% with clear_url=None %}
+                {% url 'fleet:fisherman-list' as clear_url %}
+                {% include 'fleet/generic/filter.html' %}
+            {% endwith %}
+
+            <div class="collapse" id="collapseFilter">
+              <div class="card card-body text-white bg-dark" style="border-color: dimgray">
+                <form method="get">
+                    {% bootstrap_form form %}
+                    <button type="submit" class="btn btn-secondary btn-sm">Apply</button>
+                    <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        cancel
+                    </button>
+                </form>
+              </div>
+            </div>
+
+            <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray">
+                <tbody>
+                    {% for fisherman in fishers %}
+                    <tr>
+                        <td>
+                            {% include 'fleet/fisherman/fisherman.html' %}
+                        </td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% include 'fleet/generic/pagination.html' %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

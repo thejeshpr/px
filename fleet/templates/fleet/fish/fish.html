@@ -1,0 +1,23 @@
+<div>
+    <i id="{{fish.pk}}" class="bm-icon las la-fish text-{{ fish.tagged|yesno:'warning,secondary' }}"></i>
+<!--    <i class="las la-fish"></i>-->
+    <span class="badge bg-secondary">#{{ fish.id }}</span>
+    <code class="text-muted">[<a class="text-muted" href="{% url 'fleet:fisherman-detail' fish.fisherman.slug %}">{{ fish.fisherman }}</a>]</code>
+    <br/>
+
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <code class="text-muted">
+            <span class="text-white">{{ fish.name }}</span><br/>
+            <a href="{{ fish.link }}" class="text-muted">{{ fish.link|truncatechars:40 }}</a> <br/>
+            type: <a class="text-white" href="{% url 'fleet:fish-list' %}?{{ request.GET.urlencode }}&fish_type={{ fish.fish_type.slug }}">{{ fish.fish_type.name }}</a>
+            caught at: <span><a class="text-muted" href="{% url 'fleet:fish-list' %}?{{ request.GET.urlencode }}&caught_at={{ fish.caught_at|date:'Y' }}-{{ fish.caught_at|date:'m' }}-{{ fish.caught_at|date:'d' }}">{{ fish.caught_at|date:'d/m/Y h:i:s a' }}</a></span>
+            {% if fish.additional_info %}<br/><br/><pre>{{ fish.additional_info }}</pre>{% endif %}
+        </code>
+    </div>
+
+    {% if fish.link|slice:":6" not in 'https://' %}
+    <code class="text-danger">
+        {{ fish.link }}<br/>
+    </code>
+    {% endif %}
+</div>

@@ -3,6 +3,9 @@ from datetime import timedelta
 import json
 import uuid
 
+
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Case, When, Value, BooleanField, Q
 from django.forms import model_to_dict
@@ -16,6 +19,8 @@ from django.utils import timezone
 from .forms import SiteConfFormByJSON, SiteConfFilterForm, BulkCreateForm
 from .job_views import InvokeBackend
 from .models import SiteConf, Category, ConfigValues
+from .other_libs import check_if_ns_enabled
+from .custom_warpper import custom_required, custom_required_class_based
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +45,8 @@ def convert_qp_to_qf(request, type_):
                 filters[col_mapping[type_][k]] = val
 
 
+# @method_decorator(login_required(login_url='/login/'), name='dispatch')
+# @custom_required_class_based
 class SiteConfListView(ListView):
     model = SiteConf
     template_name = "crawler/siteconf/list.html"
@@ -48,6 +55,8 @@ class SiteConfListView(ListView):
     # queryset = SiteConf.objects.order_by('-id')
 
     def get_queryset(self):
+        from pprint import pprint
+
         ten_days_ago = timezone.now() - timedelta(days=10)
 
         self.filters = []
@@ -81,8 +90,9 @@ class SiteConfListView(ListView):
                 self.filters.append(f"is_locked={is_locked}")
 
             if form.cleaned_data['ns']:
-                qry = qry.filter(ns_flag=form.cleaned_data['ns'])
-                self.filters.append('ns')
+                if check_if_ns_enabled(self.request):
+                    qry = qry.filter(ns_flag=form.cleaned_data['ns'])
+                    self.filters.append('ns')
             else:
                 qry = qry.exclude(ns_flag=True)
 

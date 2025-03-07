@@ -1,7 +1,7 @@
 <div>
     <code class="text-white">
         <span class="badge bg-{{ queue.ns_flag|yesno:'danger,secondary' }}"><strong>#{{ queue.id }}</strong></span>
-        <a class="text-white" href="{% url 'crawler:q-detail' queue.pk %}">{{ queue.pk }}</a>
+        <a class="link-secondary" href="{% url 'crawler:q-detail' queue.pk %}">[j{{ queue.jobs.count }}-i{{ queue.items.count }}]</a>
 
 
         <div class="float-end">

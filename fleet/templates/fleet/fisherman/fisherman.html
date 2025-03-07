@@ -1,0 +1,40 @@
+<div>
+
+    <code class="text-white">
+        <strong><a href="{% url 'fleet:fisherman-detail' fisherman.slug %}" class="text-success"> {{ fisherman.id }} - {{ fisherman.name }}</a></strong><br/>
+        <div class="float-end">
+            <span class="badge bg-secondary rounded-pill">{{ fisherman.nets.all.count }} | {{ fisherman.fishes.all.count }}</span>
+        </div>
+        <span>active: <span class="badge rounded-pill bg-{{ fisherman.active|yesno:'success,danger' }}">{{ fisherman.active|yesno:'yes,no' }}</span></span><br/>
+        <span>Type: {{ fisherman.fish_type.name }}</span><br/>
+
+        <span>
+            Last catch:
+            <span class="text-{{ fisherman.last_successful_catch|yesno:'success,danger' }}">{{ fisherman.last_successful_catch|date:'d/m/Y'|default:'never' }}</span>
+        </span><br/>
+
+        <div class="btn-group" role="group" aria-label="sctions">
+          <a href="{% url 'fleet:fisherman-add-to-ship' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">dock</a>
+<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Middle</button>-->
+<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Right</button>-->
+            <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  actions
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <li><a class="dropdown-item" href="{% url 'fleet:fisherman-edit' fisherman.slug %}">modify</a></li>
+                  <li><a class="dropdown-item" href="{% url 'fleet:fisherman-clone' fisherman.slug %}">clone</a></li>
+                  <li><a class="dropdown-item" href="{% url 'fleet:fisherman-delete' fisherman.slug %}">remove</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </code>
+
+</div>
+
+
+
+<!--<div class="justify-content-end">-->
+<!--    <span class="badge bg-secondary rounded-pill">{{ fisherman.jobs.all.count }} | {{ fisherman.items.all.count }}</span>-->
+<!--</div>-->

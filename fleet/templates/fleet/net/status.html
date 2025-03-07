@@ -1,0 +1,9 @@
+{% with fish_count=net.fishes.count %}
+    {% if net.status == "FISHED" %} <span class="badge rounded-pill bg-success"><i class="las la-check-double"></i> {{fish_count}}</span>
+    {% elif net.status == "DAMAGED" %}<span class="badge rounded-pill bg-danger">e:{{fish_count}}</span>
+    {% elif net.status == "IN-USE" %}<span class="badge rounded-pill bg-primary">r:{{fish_count}}</span>
+    {% elif net.status == "EMPTY" %}<span class="badge rounded-pill bg-secondary">nf</span>
+    {% elif net.status == "NEW" %}<span class="badge rounded-pill bg-warning text-dark">new</span>
+    {% elif net.status == "CAST" %}<span class="badge rounded-pill bg-warning text-dark">cast</span>
+    {% endif %}
+{% endwith %}

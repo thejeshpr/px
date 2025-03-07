@@ -1,0 +1,35 @@
+<script>
+$(document).ready(function(){
+    $(".bm-icon").click(function(){
+
+      // var id = $(this).attr("id").replace("star-", "");
+      var id = $(this).attr("id");
+      elmnt = $(this);
+      $.ajax({
+        type: 'GET',
+        url: "/fish/" + id + "/toggle-tagged",
+        encode: true,
+        success: function(data, textStatus, jqXHR) {
+            console.log(data.status)
+
+            if (data.action == "tagged"){
+                console.log("marked");
+                console.log(id );
+                elmnt.removeClass("text-white").addClass("text-warning");
+                // $(this).removeClass("text-white").addClass("text-warning");
+            } else {
+                console.log("untagged");
+                elmnt.removeClass("text-warning").addClass("text-white");
+                // $(this).removeClass("text-warning").addClass("text-white");
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log("ERROR");
+        }
+      }).done(function(data) {
+        // done
+      });
+    });
+
+});
+</script>

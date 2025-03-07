@@ -1,0 +1,5 @@
+{% if ship.status == "WAITING" %} <span class="badge rounded-pill bg-warning text-dark">docked</span>
+{% elif ship.status == "SAILING" %}<span class="badge rounded-pill bg-primary">sailing</span>
+{% elif ship.status == "RETURNED" %}<span class="badge rounded-pill bg-success">returned</span>
+{% elif ship.status == "DAMAGED" %}<span class="badge rounded-pill bg-danger">damaged</span>
+{% endif %}

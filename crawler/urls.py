@@ -5,6 +5,7 @@ from . import item_views
 from . import job_views
 from . import config_views
 from . import q_views
+from . import other_views
 
 from . import test_views
 
@@ -51,5 +52,9 @@ urlpatterns = [
 
     path('data/bulk/dump', views.DataDump.as_view(), name='data-bulk-dump'),
     path('data/bulk/create', views.DataBulkCreate.as_view(), name='data-bulk-create'),
+
+    path('showd/<int:year>/<int:month>/<int:day>/', other_views.ShowDateView.as_view(), name='show_date_view'),
+    path('show/<int:number>/', other_views.ShowView.as_view(), name='show_view'),
+    path('test/<str:data>/', other_views.TestView.as_view(), name='test-view'),
 
 ]

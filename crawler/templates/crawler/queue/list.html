@@ -20,12 +20,18 @@
                 <h5 class="card-title mb-0">
                     Queues
                     <span class="text-muted">({{ count }})</span>
-                    <a class="btn btn-sm btn-warning {{ q_in_waiting|yesno:',d-none' }}" href="{% url 'crawler:q-process' %}?get_q_list=yes">Process Q >></a>
+                    <a class="btn btn-sm btn-warning {{ q_in_waiting|yesno:',d-none' }}" href="{% url 'crawler:q-process' %}?get_q_list=yes">
+                        <i class="las la-running"></i>Q
+                    </a>
                 </h5>
 
-                <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
-                    Filters
-                </a>
+
+                <div class="d-flex justify-content-end">
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'crawler:job-create-bulk' %}">+</a> &nbsp;
+                    <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
+                        <i class="las la-filter"></i>
+                    </a>
+                </div>
 
             </div>
 

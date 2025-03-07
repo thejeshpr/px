@@ -1,0 +1,105 @@
+{% extends "fleet/base.html" %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="container py-4">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:job-list' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">SiteConfs</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white mb-3">
+        <div class="card-body bg-dark text-white">
+
+              <a class="btn btn-secondary btn-sm mb-1" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
+                Filters
+              </a>
+<!--            {% if filters %}-->
+<!--                <a class="btn btn-outline-warning btn-sm" href="{% url 'fleet:siteconf-list' %}">clear</a>-->
+<!--            {% endif %}-->
+
+            <div class="collapse" id="collapseFilter">
+              <div class="card card-body text-white bg-dark" style="border-color: dimgray">
+                <form method="get">
+                    {% bootstrap_form form %}
+                    <button type="submit" class="btn btn-secondary btn-sm">Apply</button>
+<!--                    <button type="reset" class="btn btn-secondary btn-sm">Reset</button>-->
+
+                    <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                        cancel
+                    </button>
+
+                </form>
+              </div>
+            </div>
+
+            {% with clear_url=None %}
+                {% url 'fleet:siteconf-list' as clear_url %}
+                {% include 'fleet/generic/filter.html' %}
+            {% endwith %}
+
+        </div>
+    </div>
+
+    <ul class="list-group bg-dark text-white mb-3">
+        {% for siteconf in siteconfs %}
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+                <div>
+                    <strong> {{ siteconf.id }} -
+                        <code><a href="{% url 'fleet:siteconf-detail' siteconf.slug %}" class="text-success"> {{ siteconf.name }}</a></code>
+                    </strong>
+                    <br/>
+                    <code class="text-white">
+                        <span>enabled: <span class="badge rounded-pill bg-{{ siteconf.enabled|yesno:'success,danger' }}">{{ siteconf.enabled|yesno:'yes,no' }}</span></span><br/>
+                        <span>category: {{ siteconf.category.name }}</span><br/>
+<!--                        <span>last sync: <span class="text-{{ siteconf.last_successful_sync|yesno:'white,danger' }}">{{ siteconf.last_successful_sync|default:'never' }}</span></span><br/>-->
+                        <span>
+                            last sync:
+                            <span class="text-{{ siteconf.is_old|yesno:'danger,white' }}">{{ siteconf.last_successful_sync|date:'d/m/Y'|default:'never' }}</span>
+                        </span><br/>
+
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                          <a href="{% url 'fleet:siteconf-create-q' siteconf.slug %}" class="btn btn-sm btn-outline-secondary">Add to Q</a>
+<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Middle</button>-->
+<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Right</button>-->
+                            <div class="btn-group" role="group">
+                                <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                  actions
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                  <li><a class="dropdown-item" href="#">edit</a></li>
+                                  <li><a class="dropdown-item" href="#">duplicate</a></li>
+                                  <li><a class="dropdown-item" href="#">delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+<!--                        <a href="{% url 'fleet:siteconf-edit' siteconf.slug %}" class="text-dark">-->
+<!--                            <i class="fas fa-edit"></i> edit-->
+<!--                        </a> |-->
+<!--                        <a href="{% url 'fleet:siteconf-edit' siteconf.slug %}" class="text-dark">-->
+<!--                            <i class="fas fa-edit"></i> sync-->
+<!--                        </a>-->
+
+                    </code>
+                </div>
+                <div class="justify-content-end">
+                    <span class="badge bg-secondary rounded-pill">{{ siteconf.jobs.all.count }} | {{ siteconf.items.all.count }}</span>
+                </div>
+
+            </li>
+        {% endfor %}
+
+    </ul>
+
+
+    <!-- Pagination -->
+    {% include 'fleet/generic/pagination.html' %}
+
+
+</div>
+{% endblock %}

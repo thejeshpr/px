@@ -1,0 +1,14 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-secondary"><strong>
+            #{{ fish_type.id }}
+        </strong></span>
+        {{ fish_type.name }}
+        <br/>
+        <small class="text-muted">
+            FM: <a class="text-muted" href="{% url 'fleet:fisherman-list' %}?fish_type={{ fish_type.slug }}">{{fish_type.fishers.count}}</a>
+            N: <a class="text-muted" href="{% url 'fleet:net-list' %}?fish_type={{ fish_type.slug }}">{{fish_type.nets.count}}</a>
+            FSH: <a class="text-muted" href="{% url 'fleet:fish-list' %}?fish_type={{ fish_type.slug }}">{{fish_type.fishes.count}}</a>
+        </small>
+    </code>
+</div>

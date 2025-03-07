@@ -1,0 +1,26 @@
+{% extends 'fleet/base.html' %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+    <div class="card bg-dark text-white">
+        <div class="card-body bg-dark text-white">
+            <h5 class="card-title mb-0">Bulk Create</h5>
+
+            <form action="{% url 'fleet:data-bulk-create' %}" method="post" class="form">
+                  {% csrf_token %}
+                  {% bootstrap_form form %}
+                  {% buttons %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  {% endbuttons %}
+            </form>
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

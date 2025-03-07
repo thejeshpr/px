@@ -1,0 +1,132 @@
+{% extends "fleet/base.html" %}
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:net-list' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'fleet:fisherman-list' %}" class="text-white">Fisherman</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ fisherman.name }} ({{ fisherman.pk }})</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title"><strong class="text-success">{{ fisherman.name }}</strong></h5>
+            <code class="text-white">
+                <strong>Base URL:</strong> <span class="badge rounded-pill bg-secondary">{{ fisherman.base_url }}</span><br/>
+                <strong>Active:</strong> <span class="badge rounded-pill bg-{{ fisherman.active|yesno:'success,danger' }}">{{ fisherman.active|yesno:'yes,no' }}</span><br/>
+                <strong>Dangerous:</strong> <span class="badge rounded-pill bg-{{ fisherman.is_dangerous|yesno:'danger,secondary' }}">{{ fisherman.is_dangerous|yesno:'yes,no' }}</span><br/>
+                <strong>Is Fishing?:</strong> <span class="badge text-dark rounded-pill bg-{{ fisherman.is_fishing|yesno:'warning,secondary' }}">{{ fisherman.is_fishing|yesno:'yes,no' }}</span><br/>
+                <strong>Notes:</strong> {{ fisherman.notes|default:"No Notes Available" }}<br/>
+                <strong>Fish Type:</strong> {{ fisherman.fish_type.name|default:"Not assigned" }}<br/>
+                <strong>Strategy:</strong> <span class="badge rounded-pill bg-warning text-dark">{{ fisherman.strategy }}</span><br/>
+                <strong>Created At:</strong> {{ fisherman.created_at }}<br/>
+                <strong>Updated At:</strong> {{ fisherman.updated_at }}<br/>
+                <strong>Nets:</strong> <span class="badge rounded-pill bg-secondary">{{ fisherman.nets.count }}</span><br/>
+                <strong>Fish:</strong> <span class="badge rounded-pill bg-secondary">{{ fisherman.fishes.count }}</span>
+            </code>
+
+            <div>
+                <strong>json:</strong>
+                <pre><code>{{ json_data }}</code></pre>
+            </div>
+
+            <hr/>
+            <div class="justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <a href="{% url 'fleet:fisherman-add-to-ship' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">assign to Ship</a>
+                    <a href="{% url 'fleet:fisherman-edit' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">edit</a>
+                    <a href="{% url 'fleet:fisherman-clone' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">clone</a>
+                    <a href="{% url 'fleet:fisherman-delete' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">delete</a>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          other
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                          <li><a class="dropdown-item" href="#">other</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mt-3 bg-dark text-white">
+        <div class="card-body">
+
+            <div class="accordion accordion-flush bg-dark text-white" id="accordionFlushExample">
+              <div class="accordion-item bg-dark text-white">
+                <h2 class="accordion-header bg-dark text-white" id="flush-headingOne">
+                  <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    <b>Nets</b>
+                      &nbsp;<small class="text-muted">[{{ fisherman.nets.count }}]</small>
+                  </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <div class="table-responsive bg-dark text-white">
+                          <a href="{% url 'fleet:net-list' %}?fisherman={{ fisherman.slug }}" class="link-secondary">[view all]</a>
+                            <table class="table table-hover table-bordered mt-3 bg-dark" style="border-color: dimgray">
+                                <tbody class="bg-dark">
+                                    {% for net in recent_nets %}
+                                    <tr class="bg-dark">
+                                        <td>{% include 'fleet/net/net.html' %}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-white">No nets thrown yet.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-end">
+                            </div>
+
+                        </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item bg-dark text-white">
+                <h2 class="accordion-header bg-dark text-white" id="flush-headingTwo">
+                  <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    <b>Fishes</b>&nbsp;
+                    <small class="text-muted">({{ fisherman.fishes.count }})</small>
+                  </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <div class="table-responsive bg-dark text-white">
+                            <a href="{% url 'fleet:fish-list' %}?fisherman={{ fisherman.slug }}" class="text-muted">[view all]</a>
+                            <table class="table table-hover table-bordered mt-3" style="border-color: dimgray">
+                                <tbody>
+                                    {% for fish in recent_fishes %}
+                                    <tr>
+                                        <td>
+                                            {% include 'fleet/fish/fish.html' %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-white">No Fishes catched.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block jscontent %}
+{% include 'fleet/fish/toggle_tag.html' %}
+{% endblock %}

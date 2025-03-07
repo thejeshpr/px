@@ -16,6 +16,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 
 from .models import SiteConf, Job, Category
+from .other_libs import check_if_ns_enabled
 from .q_views import get_waiting_q, add_to_q
 from .forms import JobFilterForm
 
@@ -78,10 +79,6 @@ class JobListView(ListView):
     paginate_by = 10  # Pagination
 
     def get_queryset(self):
-        # sc = self.request.GET.get("sc")
-        # cat = self.request.GET.get("cat")
-        # dt = self.request.GET.get("dt")
-        # status = self.request.GET.get("status")
 
         qry = Job.objects
         self.filters = []
@@ -107,8 +104,9 @@ class JobListView(ListView):
                 self.filters.append(form.cleaned_data["status"])
 
             if form.cleaned_data["ns"]:
-                qry = qry.filter(site_conf__ns_flag=True)
-                self.filters.append('ns')
+                if check_if_ns_enabled(self.request):
+                    qry = qry.filter(site_conf__ns_flag=True)
+                    self.filters.append('ns')
             else:
                 qry = qry.filter(site_conf__ns_flag=False)
 

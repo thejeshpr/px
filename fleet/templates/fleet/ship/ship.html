@@ -1,0 +1,29 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-{{ ship.is_dangerous|yesno:'danger,secondary' }}"><strong>#{{ ship.id }}</strong></span>
+        <i class="las la-ship"></i> <a class="text-white" href="{% url 'fleet:ship-detail' ship.pk %}"> {{ ship.name }}</a>
+
+
+        <div class="float-end">
+            {% include 'fleet/ship/status.html' %}<br/>
+            <span class="badge bg-secondary rounded-pill">{{ ship.nets.count }} | {{ ship.fishes.count }}</span>
+        </div><br/>
+
+        <small>
+            <span class="text-muted"><i class="las la-calendar"></i> : {{ ship.docked_time|date:'d/m/Y h:i:s a' }} </span> <br/>
+            <span class="text-muted"><i class="las la-chalkboard"></i> : {{ ship.departure_time|date:'d/m/Y h:i:s a' }}</span><br/>
+            <span class="text-muted"><i class="las la-stopwatch"></i> : {% if ship.time_spent %} {{ ship.time_spent }} {% endif %}</span>
+            <br/>
+            <strong>Fishers:</strong><br/>
+            {% for net in ship.nets.all %}
+                {% if net.status == "DAMAGED" %}
+                    <span class="mx-2">- <a class="text-danger" href="{% url 'fleet:net-detail' net.pk %}">{{ net.id }} - {{ net.fisherman.name }} ({{net.fishes.count}})</a>{% if net.time_spent %}<span class="text-muted"> - {{net.time_spent}}s</span>{% endif %}</span><br/>
+                {% else %}
+                    <span class="mx-2">
+                        - <strong class="{% if net.status == 'NEW' %}text-muted{% else %}text-success{% endif %}">{{ net.id }} {{ net.fisherman.name }} </strong>
+                        <a class="text-muted" href="{% url 'fleet:net-detail' net.pk %}">[{{net.fishes.count}}]</a>{% if net.time_spent %}<span class="text-muted"> - {{net.time_spent}}s</span>{% endif %}</span><br/>
+                {% endif %}
+            {% endfor %}
+        </small>
+    </code>
+</div>

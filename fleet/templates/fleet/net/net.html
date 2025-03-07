@@ -1,0 +1,15 @@
+<div>
+    <code class="text-white">
+        <span class="badge bg-secondary"><strong>#{{ net.id }}</strong></span>
+        <a class="text-white" href="{% url 'fleet:net-detail' net.id %}">{{ net.fisherman.name }}</a>
+        <a class="text-white" href="{% url 'fleet:fisherman-detail' net.fisherman.slug %}"><i class="las la-cog"></i></a>
+        <div class="float-end">
+            {% include 'fleet/net/status.html' %}
+        </div><br/>
+        <small class="text-muted">
+            <a class="text-muted" href="{% url 'fleet:net-list' %}?{{ request.GET.urlencode }}&deployed_at={{ net.deployed_at|date:'Y' }}-{{ net.deployed_at|date:'m' }}-{{ net.deployed_at|date:'d' }}">{{ net.deployed_at|date:'d/m/Y h:i:s a' }}</a> |
+            {{ net.time_in_water }}s
+            {% if net.ship %}| <a class="text-muted" href="{% url 'fleet:ship-detail' net.ship.pk %}">[S:{{ net.ship.id }}]</a>{% endif %}
+        </small>
+    </code>
+</div>

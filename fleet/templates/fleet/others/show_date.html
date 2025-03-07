@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Show Date</title>
+</head>
+<body>
+    {% if error %}
+        <h2>{{ error }}</h2>
+    {% else %}
+        <h2>Selected Date: {{ selected_date }}</h2>
+        {% if is_today %}
+            <p style="color: green;">This is today's date!</p>
+        {% else %}
+            <p style="color: red;">This is not today's date.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

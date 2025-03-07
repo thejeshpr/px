@@ -1,0 +1,30 @@
+{% extends "fleet/base.html" %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+
+<div class="container mt-3">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:home' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page"><a href="{% url 'fleet:fish-type-list' %}" class="text-white"><strong>FishType</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Edit</li>
+      </ol>
+    </nav>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body bg-dark text-white">
+            <h5 class="card-title">Edit FishType : {{ fish_type.name }} </h5>
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                <a href="{% url 'fleet:fish-type-list' %}" class="btn btn-warning btn-sm">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

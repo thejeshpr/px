@@ -1,0 +1,56 @@
+{% extends "fleet/base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:net-list' %}" class="text-white"><strong>Home</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Ship - {{ ship.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="card text-white bg-dark">
+        <div class="card-body">
+            <code class="text-white">
+                <strong>ID: {{ ship.id }}</strong><br/>
+                <strong>Created at:</strong> {{ ship.departure_time |date:'Y-m-d H:i' }}<br/>
+                <strong>Process At:</strong> {{ ship.arrival_time |date:'Y-m-d H:i' }}<br/>
+                <strong>Status:</strong>{% include 'fleet/ship/status.html' %}<br/>
+
+                {% if ship.problem %}
+                    <strong>PROBLEM</strong><br/>
+                    <pre><code class="text-danger">{{ ship.problem }}</code></pre>
+                {% endif %}
+            </code>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-white mt-2 ">
+        <div class="card-body bg-dark text-white">
+            <h5 class="card-title">Nets</h5>
+            <div class="table-responsive mt-2 bg-dark text-white">
+                <table class="table table-hover table-bordered mt-3 bg-dark text-white" style="border-color: dimgray">
+                    <tbody>
+                        {% for net in ship.nets.all %}
+                        <tr>
+                            <td>
+                                <div>
+                                    {% include 'fleet/net/net.html' %}
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No Fishes in this Ship.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

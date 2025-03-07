@@ -1,0 +1,30 @@
+{% extends "fleet/base.html" %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+
+<div class="container mt-3">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'fleet:home' %}" class="text-white"><strong>Home</strong></a></li>
+          <li class="breadcrumb-item"><a href="{% url 'fleet:ship-config-list' %}" class="text-white"><strong>ShipConfig</strong></a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Edit [{{ ship_config.key }}]</li>
+      </ol>
+    </nav>
+
+    <div class="card text-white bg-dark">
+        <div class="card-body text-white bg-dark">
+            <h5 class="card-title">Edit Config : {{ ship_config.key }} </h5>
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                <a href="{% url 'fleet:ship-config-list' %}" class="btn btn-warning btn-sm">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
