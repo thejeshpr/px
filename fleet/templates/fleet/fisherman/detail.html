@@ -21,6 +21,7 @@
                 <strong>Notes:</strong> {{ fisherman.notes|default:"No Notes Available" }}<br/>
                 <strong>Fish Type:</strong> {{ fisherman.fish_type.name|default:"Not assigned" }}<br/>
                 <strong>Strategy:</strong> <span class="badge rounded-pill bg-warning text-dark">{{ fisherman.strategy }}</span><br/>
+                <strong>Docked:</strong> <span class="badge rounded-pill bg-warning text-dark">{{ fisherman.is_docked }}</span><br/>
                 <strong>Created At:</strong> {{ fisherman.created_at }}<br/>
                 <strong>Updated At:</strong> {{ fisherman.updated_at }}<br/>
                 <strong>Nets:</strong> <span class="badge rounded-pill bg-secondary">{{ fisherman.nets.count }}</span><br/>

@@ -12,6 +12,9 @@
             Last catch:
             <span class="text-{{ fisherman.last_successful_catch|yesno:'success,danger' }}">{{ fisherman.last_successful_catch|date:'d/m/Y'|default:'never' }}</span>
         </span><br/>
+        {% if fisherman.is_docked %}
+            Docked: <span class="badge bg-warning text-dark">yes</span><br/>
+        {% endif %}
 
         <div class="btn-group" role="group" aria-label="sctions">
           <a href="{% url 'fleet:fisherman-add-to-ship' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">dock</a>

@@ -89,7 +89,7 @@ def add_to_ship(request, fishers: List[FisherMan]):
     nets = list()
 
     for fisherman in fishers:
-        if not fisherman.active or fisherman.name in ['default', 'd-default']:
+        if not fisherman.active or fisherman.name in ['default', 'd-default'] or fisherman.is_docked:
             continue
 
         ship = get_docked_ship(dangerous=fisherman.is_dangerous)
@@ -99,6 +99,8 @@ def add_to_ship(request, fishers: List[FisherMan]):
         if check_fisher_is_eligible_for_ship(request, ship, fisherman):
             net.ship = ship
             nets.append(net)
+            fisherman.is_docked = True
+            fisherman.save()
         else:
             logger.debug("fisher is already assigned to ship")
 
@@ -147,7 +149,7 @@ class ShipCreateView(View):
         # if request.GET.get("force_sync", None) == "yes":
         #     process_queue()
 
-        return redirect(reverse_lazy('fleet:ship-list'))
+        return redirect(reverse_lazy('fleet:fisherman-list'))
 
 
 class ShipListView(ListView):

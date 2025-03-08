@@ -33,6 +33,11 @@ class Handler:
         self.fs.is_fishing = fishing_status
         self.fs.save()
 
+    def undock_fisherman(self):
+        logging.debug(f"undocking fisherman: {self.fs.name}")
+        self.fs.is_docked = False
+        self.fs.save()
+
     def update_net_status(self, status):
         """"""
         logging.debug(f"Update net {self.net.id} Status: {status}")
@@ -67,6 +72,7 @@ class Handler:
 
         finally:
             self.update_fishing_time()
+            self.undock_fisherman()
 
             if self.net.status == "FISHED":
                 self.fs.last_successful_catch = timezone.now()
