@@ -110,7 +110,7 @@ class FishermanDetailView(DetailView):
             json_data["additional_data"] = "{}"
 
         context["json_data"] = json.dumps(json_data, indent=4)
-        context["recent_fishing"] = context['fisherman'].nets.order_by("-id")[:50]
+        context["recent_nets"] = context['fisherman'].nets.order_by("-id")[:50]
         context["recent_fishes"] = context['fisherman'].fishes.order_by("-id")[:50]
         return context
 
