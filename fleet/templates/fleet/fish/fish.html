@@ -11,7 +11,7 @@
             <a href="{{ fish.link }}" class="text-muted">{{ fish.link|truncatechars:40 }}</a> <br/>
             type: <a class="text-white" href="{% url 'fleet:fish-list' %}?{{ request.GET.urlencode }}&fish_type={{ fish.fish_type.slug }}">{{ fish.fish_type.name }}</a>
             caught at: <span><a class="text-muted" href="{% url 'fleet:fish-list' %}?{{ request.GET.urlencode }}&caught_at={{ fish.caught_at|date:'Y' }}-{{ fish.caught_at|date:'m' }}-{{ fish.caught_at|date:'d' }}">{{ fish.caught_at|date:'d/m/Y h:i:s a' }}</a></span>
-            {% if fish.additional_info %}<br/><br/><pre>{{ fish.additional_info }}</pre>{% endif %}
+            {% if fish.additional_info %}<br/><br/><p>{{ fish.additional_info }}</p>{% endif %}
         </code>
     </div>
 
