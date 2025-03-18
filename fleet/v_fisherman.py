@@ -159,6 +159,19 @@ class FishermanUpdateView(UpdateView):
     # success_url = reverse_lazy('crawler:siteconf-list')
     context_object_name = "fisherman"
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        # update dangerous status in related nets and fishes
+        fisherman = form.instance
+        fisherman.nets.all().update(is_dangerous=fisherman.is_dangerous)
+        fisherman.fishes.all().update(is_dangerous=fisherman.is_dangerous)
+
+        messages.success(self.request, "Updated fisherman details successfully.")
+
+        return response
+        # return response
+
 
 class FishermanDeleteView(DeleteView):
     model = FisherMan
