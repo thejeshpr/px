@@ -148,6 +148,8 @@ class ShipCreateView(View):
 
         # if request.GET.get("force_sync", None) == "yes":
         #     process_queue()
+        if request.GET.get("dangerous", "no").lower() in ["yes", "true", "1"]:
+            return redirect(f"{reverse_lazy('fleet:fisherman-list')}?dangerous=yes")
 
         return redirect(reverse_lazy('fleet:fisherman-list'))
 

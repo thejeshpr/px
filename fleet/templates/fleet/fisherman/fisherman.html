@@ -17,9 +17,7 @@
         {% endif %}
 
         <div class="btn-group" role="group" aria-label="sctions">
-          <a href="{% url 'fleet:fisherman-add-to-ship' fisherman.slug %}" class="btn btn-sm btn-outline-secondary">dock</a>
-<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Middle</button>-->
-<!--                          <button type="button" class="btn btn-sm btn-outline-secondary">Right</button>-->
+          <a href="{% url 'fleet:fisherman-add-to-ship' fisherman.slug %}{% if fisherman.is_dangerous %}?dangerous=yes{% endif %}" class="btn btn-sm btn-outline-secondary">dock</a>
             <div class="btn-group" role="group">
                 <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                   actions
