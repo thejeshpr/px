@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import timedelta
 import json
 import uuid
@@ -130,7 +131,14 @@ class FishermanCreateView(CreateView):
         'is_dangerous',
         'store_catching_info'
     ]
+
     # success_url = reverse_lazy('crawler:siteconf-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # print('path:', os.path.realpath(__file__))
+        # import pdb; pdb.set_trace()
+        return context
 
 
 class FishermanUpdateView(UpdateView):
