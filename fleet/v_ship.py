@@ -188,13 +188,18 @@ class ShipListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if Ship.objects.filter(status="WAITING").count():
-            context["ships_waiting"] = True
+        # if Ship.objects.filter(status="WAITING").count():
+
+        context["ships_waiting"] = check_for_docked_ships()
 
         context['filters'] = self.filters
         context["count"] = self.get_queryset().count()
         context['form'] = ShipFilterForm(self.request.GET)
         return context
+
+
+def check_for_docked_ships():
+    return True if Ship.objects.filter(status="WAITING").count() else False
 
 
 class ShipDetailView(DetailView):

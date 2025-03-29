@@ -22,6 +22,8 @@ from .forms import FishermanFilterForm, FishermanCreateByJSONForm, BulkCreateFor
 # from .job_views import InvokeBackend
 from .models import FisherMan, FishType, ShipConfig
 from .other_libs import show_dangerous_fish
+from .v_ship import check_for_docked_ships
+
 # from .custom_warpper import custom_required, custom_required_class_based
 
 logger = logging.getLogger(__name__)
@@ -85,6 +87,7 @@ class FishermanListView(ListView):
         context['filters'] = list(filter(lambda x: x not in [None, ''], self.filters))
         context['form'] = FishermanFilterForm(self.request.GET)
         context["count"] = self.get_queryset().count()
+        context["ships_waiting"] = check_for_docked_ships()
         return context
 
 class FishermanDetailView(DetailView):

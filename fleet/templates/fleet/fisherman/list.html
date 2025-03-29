@@ -21,6 +21,9 @@
                 <h5 class="card-title mb-0">
                     Fishers
                     <span class="text-muted">({{ fishers|length }})</span>
+                    <a class="btn btn-sm btn-warning {{ ships_waiting|yesno:',d-none' }}" href="{% url 'fleet:ship-sail' %}?redirect_to_ship_list=yes">
+                        <i class="las la-ship"></i> Sail
+                    </a>
                 </h5>
 
                 <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
