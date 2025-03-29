@@ -45,7 +45,7 @@ class FishermanListView(ListView):
                 default=Value(False),
                 output_field=BooleanField()
             )
-        )
+        ).order_by('name')
 
         form = FishermanFilterForm(self.request.GET)
         if form.is_valid():
@@ -225,10 +225,16 @@ class CreateFishermanByJSONView(FormView):
         return super().form_valid(form)
 
 
-# Short fisherman name generator
+# Short & fun fisherman name generator
 def generate_fisherman_name(base_name):
-    prefixes = ["Cap", "Hook", "Tide", "Reel", "Wave", "Deep", "Net", "Gill", "Fish", "Salt"]
-    suffixes = ["Hook", "Fin", "Tide", "Net", "Reel", "Cast", "Sail", "Bait", "Wake", "Drift"]
+    prefixes = [
+        "Salty", "Cap", "Hook", "Reel", "Deep", "Tide", "Drifty", "Gill", "Bait", "Sailor",
+        "Shark", "Wave", "Moby", "Barnacle", "Anchor", "Fishy", "Buoy", "Marlin", "Chum"
+    ]
+    suffixes = [
+        "Fin", "Tide", "Net", "Reel", "Hook", "Wake", "Bait", "Sail", "Drift", "Gill",
+        "Splash", "Chum", "Catch", "Plank", "Rod", "Lure", "Kraken", "Pirate", "Buoy"
+    ]
 
     return f"{random.choice(prefixes)} {base_name}" if random.choice(
         [True, False]) else f"{base_name} {random.choice(suffixes)}"
@@ -241,10 +247,11 @@ def fisherman_name_json(request):
     if not base_name:
         return JsonResponse({"error": "Name parameter is required"}, status=400)
 
-    # Generate 10 unique short fisherman names
-    fisherman_names = list(set(generate_fisherman_name(base_name) for _ in range(10)))
+    # Generate 10 unique fun fisherman names
+    fisherman_names = list(set(generate_fisherman_name(base_name) for _ in range(20)))[:10]  # Ensure 10 unique names
 
     return JsonResponse({"fisherman_names": fisherman_names})
+
 
 # @method_decorator(login_required(login_url='/login/'), name='dispatch')
 # @custom_required_class_based
