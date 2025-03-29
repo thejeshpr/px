@@ -16,6 +16,7 @@ urlpatterns = [
     path('fisherman/', v_fisherman.FishermanListView.as_view(), name='fisherman-list'),
     path('fisherman/add/', v_fisherman.FishermanCreateView.as_view(), name='fisherman-add'),
     path('fisherman/add/json/', v_fisherman.CreateFishermanByJSONView.as_view(), name='fisherman-add-json'),
+    path('fisherman/get-name/', v_fisherman.fisherman_name_json, name='fisherman-get-name'),
     path('fisherman/<slug:slug>/', v_fisherman.FishermanDetailView.as_view(), name='fisherman-detail'),
     path('fisherman/<slug:slug>/edit/', v_fisherman.FishermanUpdateView.as_view(), name='fisherman-edit'),
     path('fisherman/<slug:slug>/delete/', v_fisherman.FishermanDeleteView.as_view(), name='fisherman-delete'),

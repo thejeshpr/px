@@ -3,6 +3,7 @@ import os
 from datetime import timedelta
 import json
 import uuid
+import random
 
 
 from django.utils.decorators import method_decorator
@@ -224,8 +225,26 @@ class CreateFishermanByJSONView(FormView):
         return super().form_valid(form)
 
 
+# Short fisherman name generator
+def generate_fisherman_name(base_name):
+    prefixes = ["Cap", "Hook", "Tide", "Reel", "Wave", "Deep", "Net", "Gill", "Fish", "Salt"]
+    suffixes = ["Hook", "Fin", "Tide", "Net", "Reel", "Cast", "Sail", "Bait", "Wake", "Drift"]
+
+    return f"{random.choice(prefixes)} {base_name}" if random.choice(
+        [True, False]) else f"{base_name} {random.choice(suffixes)}"
 
 
+# JSON response view
+def fisherman_name_json(request):
+    base_name = request.GET.get("name", "").strip()
+
+    if not base_name:
+        return JsonResponse({"error": "Name parameter is required"}, status=400)
+
+    # Generate 10 unique short fisherman names
+    fisherman_names = list(set(generate_fisherman_name(base_name) for _ in range(10)))
+
+    return JsonResponse({"fisherman_names": fisherman_names})
 
 # @method_decorator(login_required(login_url='/login/'), name='dispatch')
 # @custom_required_class_based
