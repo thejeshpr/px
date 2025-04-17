@@ -10,7 +10,7 @@
 
         <span>
             Last catch:
-            <span class="text-{{ fisherman.is_old|yesno:'success,danger' }}">{{ fisherman.last_successful_catch|date:'d/m/Y'|default:'never' }}</span>
+            <span class="text-{{ fisherman.is_old|yesno:'danger,white' }}">{{ fisherman.last_successful_catch|date:'d/m/Y'|default:'never' }}</span>
         </span><br/>
         {% if fisherman.is_docked %}
             Docked: <span class="badge bg-warning text-dark">yes</span><br/>
