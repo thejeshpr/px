@@ -43,7 +43,7 @@ class FishermanListView(ListView):
 
         qry = FisherMan.objects.annotate(
             is_old=Case(
-                When(Q(last_successful_catch=ten_days_ago) | Q(last_successful_catch__isnull=True), then=Value(True)),
+                When(Q(last_successful_catch__lt=ten_days_ago) | Q(last_successful_catch__isnull=True), then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField()
             )
